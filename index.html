@@ -286,7 +286,6 @@ function startGame() {
 
     roles = roles.sort(() => Math.random()-0.5);
 
-    // Estrai UNA parola per tutta la partita
     const chosenWordPair = randomWords[Math.floor(Math.random() * randomWords.length)];
 
     roles.forEach(r => {
@@ -366,13 +365,25 @@ function restartGame() {
 }
 
 // --- Fix input focus per iOS PWA ---
-document.querySelectorAll('input').forEach(input => {
-  input.addEventListener('focus', () => {
-    setTimeout(() => {
-      input.scrollIntoView({behavior: 'smooth', block: 'center'});
-    }, 300);
-  });
-});
+function iosInputFix() {
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    if(!isIOS) return;
+
+    const inputs = document.querySelectorAll('input');
+    inputs.forEach(input => {
+        input.addEventListener('focus', () => {
+            document.body.style.paddingBottom = (window.innerHeight / 2) + 'px';
+            setTimeout(() => {
+                input.scrollIntoView({behavior: 'smooth', block: 'center'});
+            }, 300);
+        });
+        input.addEventListener('blur', () => {
+            document.body.style.paddingBottom = '20px';
+        });
+    });
+}
+
+document.addEventListener('DOMContentLoaded', iosInputFix);
 </script>
 
 </body>
