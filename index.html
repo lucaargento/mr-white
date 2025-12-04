@@ -1,13 +1,6 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<!-- Manifest PWA -->
-<link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="apple-touch-icon" href="icon-192.png">
-
 <meta charset="UTF-8">
 <title>Mister White Game</title>
 
@@ -73,7 +66,7 @@ button:active {
     opacity: 0.8;
 }
 
-#roleScreen, #finalScreen {
+#roleScreen, #intermediateScreen, #finalScreen, #wordManagerScreen {
     display: none;
 }
 
@@ -84,8 +77,13 @@ button:active {
     font-weight: bold;
 }
 
-#wordListContainer {
-    margin: 10px 0;
+ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+ul li {
+    padding: 5px 0;
 }
 </style>
 
@@ -98,17 +96,8 @@ button:active {
 <div class="card" id="setupScreen">
     <p>Inserisci i nomi dei giocatori (separati da virgola):</p>
     <input type="text" id="playerNames" placeholder="Luca, Marco, Giulia...">
-
-    <p>Parola segreta (opzionale):</p>
-    <input type="text" id="secretWord" placeholder="Lascia vuoto per parola casuale">
-
-    <p>Lista parole aggiuntive:</p>
-    <div id="wordListContainer">
-        <input type="text" id="newWord" placeholder="Aggiungi parola">
-        <button onclick="addWord()">➕ Aggiungi parola</button>
-    </div>
-
     <button onclick="startGame()">🎲 Inizia la partita</button>
+    <button onclick="openWordManager()">📝 Gestisci parole</button>
 </div>
 
 <!-- Schermata ruoli -->
@@ -119,6 +108,12 @@ button:active {
     <button id="nextPlayerBtn" onclick="nextPlayer()" style="display:none;">Giocatore successivo ➡️</button>
 </div>
 
+<!-- Schermata intermedia dopo tutti i ruoli -->
+<div class="card" id="intermediateScreen">
+    <p>Tutti hanno visto il proprio ruolo!</p>
+    <button onclick="showFinalScreen()">➡️ Mostra riepilogo</button>
+</div>
+
 <!-- Schermata riepilogo finale -->
 <div class="card" id="finalScreen">
     <h3>Riepilogo</h3>
@@ -126,31 +121,69 @@ button:active {
     <button onclick="restartGame()">🔄 Nuova partita</button>
 </div>
 
+<!-- Schermata gestione parole -->
+<div class="card" id="wordManagerScreen">
+    <h3>Lista parole gioco</h3>
+    <ul id="wordList"></ul>
+    <input type="text" id="newWordInput" placeholder="Nuova parola">
+    <button onclick="addWordToList()">➕ Aggiungi parola</button>
+    <br><br>
+    <button onclick="closeWordManager()">Chiudi</button>
+</div>
+
 <script>
+// --- Variabili globali ---
 let players = [];
 let misterWhite = "";
 let secretWord = "";
 let currentIndex = 0;
+let savedPlayerNames = "";
 
-// Lista parole casuali
-let randomWords = [
+// Lista parole default
+const defaultWords = [
     "Pizza", "Roma", "Drago", "Acqua", "Aereo",
     "Telefono", "Cinema", "Squalo", "Montagna", "Robot",
     "Gelato", "Torre", "Occhiali", "Luna", "Farfalla"
 ];
 
-// Aggiungi parola personalizzata
-function addWord() {
-    let newWord = document.getElementById("newWord").value.trim();
+// Carica parole da localStorage o usa default
+let randomWords = JSON.parse(localStorage.getItem('gameWords')) || defaultWords.slice();
+
+// --- Funzioni Gestione parole ---
+function openWordManager() {
+    document.getElementById("setupScreen").style.display = "none";
+    document.getElementById("wordManagerScreen").style.display = "block";
+    renderWordList();
+}
+
+function renderWordList() {
+    const ul = document.getElementById("wordList");
+    ul.innerHTML = "";
+    randomWords.forEach(word => {
+        const li = document.createElement("li");
+        li.textContent = word;
+        ul.appendChild(li);
+    });
+}
+
+function addWordToList() {
+    const newWord = document.getElementById("newWordInput").value.trim();
     if(newWord && !randomWords.includes(newWord)) {
         randomWords.push(newWord);
-        alert(`Parola "${newWord}" aggiunta!`);
-        document.getElementById("newWord").value = "";
+        localStorage.setItem('gameWords', JSON.stringify(randomWords));
+        document.getElementById("newWordInput").value = "";
+        renderWordList();
     } else {
         alert("Parola vuota o già presente!");
     }
 }
 
+function closeWordManager() {
+    document.getElementById("wordManagerScreen").style.display = "none";
+    document.getElementById("setupScreen").style.display = "block";
+}
+
+// --- Funzioni Gioco ---
 function startGame() {
     players = document.getElementById("playerNames")
                 .value.split(",")
@@ -162,14 +195,21 @@ function startGame() {
         return;
     }
 
-    let userWord = document.getElementById("secretWord").value.trim();
-    secretWord = userWord || randomWords[Math.floor(Math.random() * randomWords.length)];
+    // salva i nomi per la prossima partita
+    savedPlayerNames = players.join(", ");
+
+    // parola segreta casuale
+    secretWord = randomWords[Math.floor(Math.random() * randomWords.length)];
 
     misterWhite = players[Math.floor(Math.random() * players.length)];
 
-    document.getElementById("setupScreen").style.display = "none";
-    document.getElementById("roleScreen").style.display = "block";
     currentIndex = 0;
+
+    document.getElementById("setupScreen").style.display = "none";
+    document.getElementById("finalScreen").style.display = "none";
+    document.getElementById("intermediateScreen").style.display = "none";
+    document.getElementById("roleScreen").style.display = "block";
+
     updatePlayerScreen();
 }
 
@@ -196,14 +236,15 @@ function showRole() {
 function nextPlayer() {
     currentIndex++;
     if(currentIndex >= players.length) {
-        showFinalScreen();
+        document.getElementById("roleScreen").style.display = "none";
+        document.getElementById("intermediateScreen").style.display = "block";
     } else {
         updatePlayerScreen();
     }
 }
 
 function showFinalScreen() {
-    document.getElementById("roleScreen").style.display = "none";
+    document.getElementById("intermediateScreen").style.display = "none";
     document.getElementById("finalScreen").style.display = "block";
 
     document.getElementById("summaryText").innerHTML =
@@ -212,18 +253,18 @@ function showFinalScreen() {
 }
 
 function restartGame() {
-    // Reset variabili
+    // reset variabili
     players = [];
     misterWhite = "";
     secretWord = "";
     currentIndex = 0;
 
-    // Reset UI
-    document.getElementById("playerNames").value = "";
-    document.getElementById("secretWord").value = "";
-    document.getElementById("newWord").value = "";
+    // reset UI e riporta nomi precedenti
+    document.getElementById("playerNames").value = savedPlayerNames;
 
     document.getElementById("finalScreen").style.display = "none";
+    document.getElementById("intermediateScreen").style.display = "none";
+    document.getElementById("roleScreen").style.display = "none";
     document.getElementById("setupScreen").style.display = "block";
 }
 </script>
