@@ -54,6 +54,9 @@ input, input[type=number] {
     border: none;
     font-size: 18px;
     text-align: center;
+    -webkit-user-select: text;
+    user-select: text;
+    touch-action: manipulation;
 }
 
 .card {
@@ -119,7 +122,6 @@ ul li button {
 
 <h2>Mister White Game</h2>
 
-<!-- Schermata iniziale -->
 <div class="card" id="setupScreen">
     <p>Inserisci i nomi dei giocatori (separati da virgola):</p>
     <input type="text" id="playerNames" placeholder="Luca, Marco, Giulia...">
@@ -131,7 +133,6 @@ ul li button {
     <button onclick="openWordManager()">📝 Gestisci parole</button>
 </div>
 
-<!-- Schermata ruoli -->
 <div class="card" id="roleScreen">
     <h3 id="currentPlayer"></h3>
     <button id="showRoleBtn" onclick="showRole()">Mostra ruolo 🔍</button>
@@ -139,20 +140,17 @@ ul li button {
     <button id="nextPlayerBtn" onclick="nextPlayer()" style="display:none;">Giocatore successivo ➡️</button>
 </div>
 
-<!-- Schermata intermedia dopo tutti i ruoli -->
 <div class="card" id="intermediateScreen">
     <p>Tutti hanno visto il proprio ruolo!</p>
     <button onclick="showFinalScreen()">➡️ Mostra riepilogo</button>
 </div>
 
-<!-- Schermata riepilogo finale -->
 <div class="card" id="finalScreen">
     <h3>Riepilogo</h3>
     <p id="summaryText"></p>
     <button onclick="restartGame()">🔄 Nuova partita</button>
 </div>
 
-<!-- Schermata gestione parole -->
 <div class="card" id="wordManagerScreen">
     <h3>Lista parole gioco</h3>
     <ul id="wordList"></ul>
@@ -164,225 +162,43 @@ ul li button {
 </div>
 
 <script>
-// --- Variabili globali ---
-let players = [];
-let roles = [];
-let currentWords = [];
-let currentIndex = 0;
-let savedPlayerNames = "";
+// --- Variabili gioco ---
+let players=[], roles=[], currentWords=[], currentIndex=0, savedPlayerNames="";
+const defaultWords=[{main:"Pizza",infiltrator:"Pasta"},{main:"Roma",infiltrator:"Milano"},{main:"Drago",infiltrator:"Serpente"},{main:"Acqua",infiltrator:"Latte"},{main:"Aereo",infiltrator:"Elicottero"},{main:"Telefono",infiltrator:"Tablet"},{main:"Cinema",infiltrator:"Teatro"},{main:"Squalo",infiltrator:"Delfino"},{main:"Montagna",infiltrator:"Collina"},{main:"Robot",infiltrator:"Droni"},{main:"Gelato",infiltrator:"Sorbetto"},{main:"Torre",infiltrator:"Castello"},{main:"Occhiali",infiltrator:"Maschera"},{main:"Luna",infiltrator:"Sole"},{main:"Farfalla",infiltrator:"Mosca"}];
 
-// Lista parole default uniforme
-const defaultWords = [
-    {main: "Pizza", infiltrator: "Pasta"},
-    {main: "Roma", infiltrator: "Milano"},
-    {main: "Drago", infiltrator: "Serpente"},
-    {main: "Acqua", infiltrator: "Latte"},
-    {main: "Aereo", infiltrator: "Elicottero"},
-    {main: "Telefono", infiltrator: "Tablet"},
-    {main: "Cinema", infiltrator: "Teatro"},
-    {main: "Squalo", infiltrator: "Delfino"},
-    {main: "Montagna", infiltrator: "Collina"},
-    {main: "Robot", infiltrator: "Droni"},
-    {main: "Gelato", infiltrator: "Sorbetto"},
-    {main: "Torre", infiltrator: "Castello"},
-    {main: "Occhiali", infiltrator: "Maschera"},
-    {main: "Luna", infiltrator: "Sole"},
-    {main: "Farfalla", infiltrator: "Mosca"}
-];
-
-// --- Carica parole e normalizza ---
 let storedWords = JSON.parse(localStorage.getItem('gameWords'));
-if(storedWords && storedWords.length > 0) {
-    randomWords = storedWords.map(w => ({
-        main: w.main || "",
-        infiltrator: w.infiltrator || w.infiltrato || ""
-    }));
-} else {
-    randomWords = defaultWords.slice();
-}
+let randomWords = storedWords && storedWords.length>0 ? storedWords.map(w=>({main:w.main||"",infiltrator:w.infiltrator||w.infiltrato||""})) : defaultWords.slice();
 
-// --- Funzioni gestione parole ---
-function openWordManager() {
-    document.getElementById("setupScreen").style.display = "none";
-    document.getElementById("wordManagerScreen").style.display = "block";
-    renderWordList();
-}
-
-function renderWordList() {
-    const ul = document.getElementById("wordList");
-    ul.innerHTML = "";
-    randomWords.forEach((w, i) => {
-        const li = document.createElement("li");
-        li.textContent = `Main: ${w.main} | Infiltrato: ${w.infiltrator}`;
-        const delBtn = document.createElement("button");
-        delBtn.textContent = "Rimuovi";
-        delBtn.onclick = () => { removeWord(i); };
-        li.appendChild(delBtn);
-        ul.appendChild(li);
-    });
-}
-
-function addWordToList() {
-    const main = document.getElementById("newMainWord").value.trim();
-    const infiltrator = document.getElementById("newInfiltratorWord").value.trim();
-    if(main && infiltrator) {
-        randomWords.push({main, infiltrator});
-        localStorage.setItem('gameWords', JSON.stringify(randomWords));
-        document.getElementById("newMainWord").value = "";
-        document.getElementById("newInfiltratorWord").value = "";
-        renderWordList();
-    } else {
-        alert("Inserisci entrambe le parole!");
-    }
-}
-
-function removeWord(index) {
-    randomWords.splice(index, 1);
-    localStorage.setItem('gameWords', JSON.stringify(randomWords));
-    renderWordList();
-}
-
-function closeWordManager() {
-    document.getElementById("wordManagerScreen").style.display = "none";
-    document.getElementById("setupScreen").style.display = "block";
-}
+// --- Gestione parole ---
+function openWordManager(){document.getElementById("setupScreen").style.display="none";document.getElementById("wordManagerScreen").style.display="block";renderWordList();}
+function renderWordList(){const ul=document.getElementById("wordList");ul.innerHTML="";randomWords.forEach((w,i)=>{const li=document.createElement("li");li.textContent=`Main: ${w.main} | Infiltrato: ${w.infiltrator}`;const delBtn=document.createElement("button");delBtn.textContent="Rimuovi";delBtn.onclick=()=>{removeWord(i)};li.appendChild(delBtn);ul.appendChild(li);});}
+function addWordToList(){const main=document.getElementById("newMainWord").value.trim();const infiltrator=document.getElementById("newInfiltratorWord").value.trim();if(main && infiltrator){randomWords.push({main,infiltrator});localStorage.setItem('gameWords',JSON.stringify(randomWords));document.getElementById("newMainWord").value="";document.getElementById("newInfiltratorWord").value="";renderWordList();}else{alert("Inserisci entrambe le parole!");}}
+function removeWord(i){randomWords.splice(i,1);localStorage.setItem('gameWords',JSON.stringify(randomWords));renderWordList();}
+function closeWordManager(){document.getElementById("wordManagerScreen").style.display="none";document.getElementById("setupScreen").style.display="block";}
 
 // --- Funzioni gioco ---
-function startGame() {
-    players = document.getElementById("playerNames")
-        .value.split(",")
-        .map(p => p.trim())
-        .filter(p => p);
+function startGame(){players=document.getElementById("playerNames").value.split(",").map(p=>p.trim()).filter(p=>p);const numWhite=parseInt(document.getElementById("numWhite").value)||0;const numInfiltrati=parseInt(document.getElementById("numInfiltrati").value)||0;if(players.length<2){alert("Minimo 2 giocatori!");return;}if(numWhite+numInfiltrati>players.length){alert("Numero di ruoli superiore al numero di giocatori!");return;}savedPlayerNames=players.join(", ");roles=[];currentWords=[];let tempPlayers=[...players];for(let i=0;i<numWhite;i++){const idx=Math.floor(Math.random()*tempPlayers.length);roles.push({name:tempPlayers[idx],role:"Mister White"});tempPlayers.splice(idx,1);}for(let i=0;i<numInfiltrati;i++){const idx=Math.floor(Math.random()*tempPlayers.length);roles.push({name:tempPlayers[idx],role:"Infiltrato"});tempPlayers.splice(idx,1);}tempPlayers.forEach(p=>{roles.push({name:p,role:"Normale"});});roles.sort(()=>Math.random()-0.5);const chosenWordPair=randomWords[Math.floor(Math.random()*randomWords.length)];roles.forEach(r=>{currentWords.push(r.role==="Normale"?chosenWordPair.main:r.role==="Infiltrato"?chosenWordPair.infiltrator:"");});currentIndex=0;document.getElementById("setupScreen").style.display="none";document.getElementById("finalScreen").style.display="none";document.getElementById("intermediateScreen").style.display="none";document.getElementById("roleScreen").style.display="block";updatePlayerScreen();}
+function updatePlayerScreen(){document.getElementById("currentPlayer").innerText="Turno di: "+roles[currentIndex].name;document.getElementById("roleText").style.display="none";document.getElementById("showRoleBtn").style.display="block";document.getElementById("nextPlayerBtn").style.display="none";}
+function showRole(){const r=roles[currentIndex];let roleText="";if(r.role==="Mister White")roleText="❓ SEI MISTER WHITE! ❓";else roleText=`Parola: ${currentWords[currentIndex]}`;document.getElementById("roleText").innerText=roleText;document.getElementById("roleText").style.display="block";document.getElementById("showRoleBtn").style.display="none";document.getElementById("nextPlayerBtn").style.display="block";}
+function nextPlayer(){currentIndex++;if(currentIndex>=roles.length){document.getElementById("roleScreen").style.display="none";document.getElementById("intermediateScreen").style.display="block";}else{updatePlayerScreen();}}
+function showFinalScreen(){document.getElementById("intermediateScreen").style.display="none";document.getElementById("finalScreen").style.display="block";const summary=roles.map((r,i)=>{let word=r.role==="Mister White"? "-":currentWords[i];return `${r.name} - ${r.role} - ${word}`;}).join("<br>");document.getElementById("summaryText").innerHTML=summary;}
+function restartGame(){players=[];roles=[];currentWords=[];currentIndex=0;document.getElementById("playerNames").value=savedPlayerNames;document.getElementById("finalScreen").style.display="none";document.getElementById("intermediateScreen").style.display="none";document.getElementById("roleScreen").style.display="none";document.getElementById("setupScreen").style.display="block";}
 
-    const numWhite = parseInt(document.getElementById("numWhite").value) || 0;
-    const numInfiltrati = parseInt(document.getElementById("numInfiltrati").value) || 0;
-
-    if(players.length < 2) {
-        alert("Minimo 2 giocatori!");
-        return;
-    }
-    if(numWhite + numInfiltrati > players.length) {
-        alert("Numero di ruoli superiore al numero di giocatori!");
-        return;
-    }
-
-    savedPlayerNames = players.join(", ");
-
-    roles = [];
-    currentWords = [];
-
-    let tempPlayers = [...players];
-    for(let i=0;i<numWhite;i++){
-        const idx = Math.floor(Math.random()*tempPlayers.length);
-        roles.push({name: tempPlayers[idx], role: "Mister White"});
-        tempPlayers.splice(idx,1);
-    }
-    for(let i=0;i<numInfiltrati;i++){
-        const idx = Math.floor(Math.random()*tempPlayers.length);
-        roles.push({name: tempPlayers[idx], role: "Infiltrato"});
-        tempPlayers.splice(idx,1);
-    }
-    tempPlayers.forEach(p=>{ roles.push({name: p, role: "Normale"}); });
-
-    roles = roles.sort(() => Math.random()-0.5);
-
-    const chosenWordPair = randomWords[Math.floor(Math.random() * randomWords.length)];
-
-    roles.forEach(r => {
-        if (r.role === "Normale") {
-            currentWords.push(chosenWordPair.main);
-        } else if (r.role === "Infiltrato") {
-            currentWords.push(chosenWordPair.infiltrator);
-        } else {
-            currentWords.push(""); // Mister White non vede niente
-        }
+// --- Fix PWA iOS input ---
+function iosInputFix(){
+  const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.MSStream;
+  if(!isIOS) return;
+  const inputs=document.querySelectorAll('input');
+  inputs.forEach(input=>{
+    input.addEventListener('focus',()=>{
+      document.body.style.position='absolute';
+      setTimeout(()=>{input.scrollIntoView({behavior:'smooth',block:'center'});},300);
     });
-
-    currentIndex = 0;
-    document.getElementById("setupScreen").style.display = "none";
-    document.getElementById("finalScreen").style.display = "none";
-    document.getElementById("intermediateScreen").style.display = "none";
-    document.getElementById("roleScreen").style.display = "block";
-
-    updatePlayerScreen();
-}
-
-function updatePlayerScreen() {
-    document.getElementById("currentPlayer").innerText =
-        "Turno di: " + roles[currentIndex].name;
-
-    document.getElementById("roleText").style.display = "none";
-    document.getElementById("showRoleBtn").style.display = "block";
-    document.getElementById("nextPlayerBtn").style.display = "none";
-}
-
-function showRole() {
-    const r = roles[currentIndex];
-    let roleText = "";
-    if(r.role === "Mister White") roleText = "❓ SEI MISTER WHITE! ❓";
-    else if(r.role === "Infiltrato") roleText = `Parola: ${currentWords[currentIndex]}`;
-    else roleText = `Parola: ${currentWords[currentIndex]}`;
-
-    document.getElementById("roleText").innerText = roleText;
-    document.getElementById("roleText").style.display = "block";
-    document.getElementById("showRoleBtn").style.display = "none";
-    document.getElementById("nextPlayerBtn").style.display = "block";
-}
-
-function nextPlayer() {
-    currentIndex++;
-    if(currentIndex >= roles.length) {
-        document.getElementById("roleScreen").style.display = "none";
-        document.getElementById("intermediateScreen").style.display = "block";
-    } else {
-        updatePlayerScreen();
-    }
-}
-
-function showFinalScreen() {
-    document.getElementById("intermediateScreen").style.display = "none";
-    document.getElementById("finalScreen").style.display = "block";
-
-    const summary = roles.map((r,i)=>{
-        let word = r.role === "Mister White" ? "-" : currentWords[i];
-        return `${r.name} - ${r.role} - ${word}`;
-    }).join("<br>");
-
-    document.getElementById("summaryText").innerHTML = summary;
-}
-
-function restartGame() {
-    players = [];
-    roles = [];
-    currentWords = [];
-    currentIndex = 0;
-
-    document.getElementById("playerNames").value = savedPlayerNames;
-    document.getElementById("finalScreen").style.display = "none";
-    document.getElementById("intermediateScreen").style.display = "none";
-    document.getElementById("roleScreen").style.display = "none";
-    document.getElementById("setupScreen").style.display = "block";
-}
-
-// --- Fix input focus per iOS PWA ---
-function iosInputFix() {
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    if(!isIOS) return;
-
-    const inputs = document.querySelectorAll('input');
-    inputs.forEach(input => {
-        input.addEventListener('focus', () => {
-            document.body.style.paddingBottom = (window.innerHeight / 2) + 'px';
-            setTimeout(() => {
-                input.scrollIntoView({behavior: 'smooth', block: 'center'});
-            }, 300);
-        });
-        input.addEventListener('blur', () => {
-            document.body.style.paddingBottom = '20px';
-        });
+    input.addEventListener('blur',()=>{
+      document.body.style.position='relative';
     });
+  });
 }
-
 document.addEventListener('DOMContentLoaded', iosInputFix);
 </script>
 
