@@ -4,7 +4,96 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mister White Game</title>
-<link rel="stylesheet" href="style.css">
+<style>
+:root {
+    --bg: #121212;
+    --card: #1E1E1E;
+    --accent: #00D4A6;
+    --text: #EAEAEA;
+    --danger: #FF4D4D;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    text-align: center;
+    margin: 0;
+    padding: 20px;
+}
+
+h2 {
+    color: var(--accent);
+    margin-bottom: 10px;
+}
+
+input, input[type=number] {
+    width: 90%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    margin: 10px 0;
+    font-size: 18px;
+    text-align: center;
+}
+
+.card {
+    background: var(--card);
+    padding: 20px;
+    border-radius: 15px;
+    max-width: 450px;
+    margin: 20px auto;
+    box-shadow: 0 0 15px rgba(0, 212, 166, 0.25);
+}
+
+button {
+    width: 90%;
+    max-width: 300px;
+    padding: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 15px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    background-color: var(--accent);
+    color: black;
+    transition: transform 0.2s, opacity 0.2s;
+}
+
+button:active {
+    transform: scale(0.95);
+    opacity: 0.8;
+}
+
+#roleScreen, #intermediateScreen, #finalScreen, #wordManagerScreen {
+    display: none;
+}
+
+#roleText {
+    font-size: 26px;
+    margin-top: 20px;
+    color: var(--accent);
+    font-weight: bold;
+}
+
+ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+ul li {
+    padding: 5px 0;
+}
+ul li button {
+    background: var(--danger);
+    color: white;
+    margin-left: 10px;
+    padding: 3px 8px;
+    font-size: 14px;
+    border-radius: 5px;
+}
+</style>
 </head>
 
 <body>
@@ -236,4 +325,5 @@ function shuffle(a) {
 </script>
 </body>
 </html>
+
 
