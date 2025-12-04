@@ -185,7 +185,7 @@ function renderWordList() {
     ul.innerHTML = "";
     randomWords.forEach((w, i) => {
         const li = document.createElement("li");
-        li.textContent = `Main: ${w.main} | Infiltrato: ${w.infiltrator || w.infiltrado || w.infiltrator}`;
+        li.textContent = `Main: ${w.main} | Infiltrato: ${w.infiltrator}`;
         const delBtn = document.createElement("button");
         delBtn.textContent = "✖️";
         delBtn.onclick = () => { removeWord(i); };
@@ -349,4 +349,5 @@ function restartGame() {
 
 </body>
 </html>
+
 
