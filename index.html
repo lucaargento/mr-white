@@ -2,311 +2,200 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mister White Game</title>
-
 <style>
-:root {
-    --bg: #121212;
-    --card: #1E1E1E;
-    --accent: #00D4A6;
-    --text: #EAEAEA;
-    --danger: #FF4D4D;
-}
-
-body {
-    font-family: 'Arial', sans-serif;
-    background-color: var(--bg);
-    color: var(--text);
-    text-align: center;
-    margin: 0;
-    padding: 20px;
-}
-
-h2 {
-    color: var(--accent);
-    margin-bottom: 10px;
-}
-
-input, input[type=number] {
-    width: 90%;
-    padding: 12px;
-    border-radius: 10px;
-    border: none;
-    margin: 10px 0;
-    font-size: 18px;
-    text-align: center;
-}
-
-.card {
-    background: var(--card);
-    padding: 20px;
-    border-radius: 15px;
-    max-width: 450px;
-    margin: 20px auto;
-    box-shadow: 0 0 15px rgba(0, 212, 166, 0.25);
-}
-
-button {
-    width: 90%;
-    max-width: 300px;
-    padding: 15px;
-    font-size: 18px;
-    font-weight: bold;
-    margin-top: 15px;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    background-color: var(--accent);
-    color: black;
-    transition: transform 0.2s, opacity 0.2s;
-}
-
-button:active {
-    transform: scale(0.95);
-    opacity: 0.8;
-}
-
-#roleScreen, #intermediateScreen, #finalScreen, #wordManagerScreen {
-    display: none;
-}
-
-#roleText {
-    font-size: 26px;
-    margin-top: 20px;
-    color: var(--accent);
-    font-weight: bold;
-}
-
-ul {
-    list-style-type: none;
-    padding-left: 0;
-}
-
-ul li {
-    padding: 5px 0;
-}
-ul li button {
-    background: var(--danger);
-    color: white;
-    margin-left: 10px;
-    padding: 5px 10px;
-    font-size: 14px;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
+    :root {
+        --main-bg: #222;
+        --card-bg: #333;
+        --accent: #4CAF50;
+        --danger: #c0392b;
+        --text: #fff;
+    }
+    body {
+        margin: 0;
+        background: var(--main-bg);
+        color: var(--text);
+        font-family: Arial, sans-serif;
+        text-align: center;
+    }
+    .screen {
+        display: none;
+        padding: 20px;
+    }
+    button {
+        padding: 10px 18px;
+        margin: 10px;
+        border: none;
+        border-radius: 8px;
+        background: var(--accent);
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+    }
+    button.danger { background: var(--danger); }
+    input {
+        padding: 10px;
+        margin: 5px;
+        width: 80%;
+        max-width: 300px;
+        border-radius: 6px;
+        border: none;
+    }
+    ul { list-style: none; padding: 0; }
+    li {
+        margin: 8px 0;
+        padding: 10px;
+        background: var(--card-bg);
+        border-radius: 6px;
+    }
+    ul li button {
+        background: var(--danger);
+        color: white;
+        margin-left: 10px;
+        padding: 5px 10px;
+        font-size: 14px;
+        border-radius: 6px;
+        cursor: pointer;
+    }
 </style>
 </head>
+
 <body>
 
-<h2>Mister White Game</h2>
-
-<!-- Schermata iniziale -->
-<div class="card" id="setupScreen">
-    <p>Inserisci i nomi dei giocatori (separati da virgola):</p>
-    <input type="text" id="playerNames" placeholder="Luca, Marco, Giulia...">
-    <p>Numero di Mister White:</p>
-    <input type="number" id="numWhite" value="1" min="0">
-    <p>Numero di Infiltrati:</p>
-    <input type="number" id="numInfiltrati" value="1" min="0">
-    <button onclick="startGame()">🎲 Inizia la partita</button>
-    <button onclick="openWordManager()">📝 Gestisci parole</button>
+<div id="startScreen" class="screen" style="display:block;">
+    <h1>Mister White</h1>
+    <p>Inserisci i nomi dei giocatori (separati da virgole)</p>
+    <input id="nameInput" placeholder="Es: Luca, Marco, Sara">
+    <p>Numero Mister White:</p>
+    <input id="numWhite" type="number" min="0" value="1">
+    <p>Numero Infiltrati:</p>
+    <input id="numInfiltrati" type="number" min="0" value="1">
+    <button onclick="startGame()">Inizia</button>
+    <br>
+    <button onclick="openWordManager()">Gestione Parole</button>
 </div>
 
-<!-- Schermata ruoli -->
-<div class="card" id="roleScreen">
-    <h3 id="currentPlayer"></h3>
-    <button id="showRoleBtn" onclick="showRole()">Mostra ruolo 🔍</button>
-    <p id="roleText" style="display:none;"></p>
-    <button id="nextPlayerBtn" onclick="nextPlayer()" style="display:none;">Giocatore successivo ➡️</button>
+<div id="roleScreen" class="screen">
+    <h2 id="playerName"></h2>
+    <button id="showRoleBtn" onclick="showRole()">Mostra</button>
+    <p id="roleText" style="display:none;font-size:24px;font-weight:bold;"></p>
+    <button id="nextPlayerBtn" onclick="nextPlayer()" style="display:none;">Avanti</button>
 </div>
 
-<!-- Schermata intermedia dopo tutti i ruoli -->
-<div class="card" id="intermediateScreen">
-    <p>Tutti hanno visto il proprio ruolo!</p>
-    <button onclick="showFinalScreen()">➡️ Mostra riepilogo</button>
+<div id="readyScreen" class="screen">
+    <h2>TUTTI HANNO VISTO IL RUOLO</h2>
+    <p>Quando siete pronti...</p>
+    <button onclick="showSummary()">Inizia Discussione</button>
 </div>
 
-<!-- Schermata riepilogo finale -->
-<div class="card" id="finalScreen">
-    <h3>Riepilogo</h3>
-    <p id="summaryText"></p>
-    <button onclick="restartGame()">🔄 Nuova partita</button>
+<div id="summaryScreen" class="screen">
+    <h2>Riepilogo</h2>
+    <ul id="summaryList"></ul>
+    <button onclick="restart()">Nuova Partita</button>
 </div>
 
-<!-- Schermata gestione parole -->
-<div class="card" id="wordManagerScreen">
-    <h3>Lista parole gioco</h3>
+<div id="wordManager" class="screen">
+    <h2>Gestione Parole</h2>
     <ul id="wordList"></ul>
-    <input type="text" id="newMainWord" placeholder="Parola principale">
-    <input type="text" id="newInfiltratorWord" placeholder="Parola infiltrato">
-    <button onclick="addWordToList()">➕ Aggiungi parola</button>
+    <hr>
+    <h3>Aggiungi nuova parola</h3>
+    <input id="addMain" placeholder="Parola principale">
+    <input id="addInfil" placeholder="Parola infiltrato">
+    <button onclick="addWord()">Aggiungi</button>
     <br><br>
-    <button onclick="closeWordManager()">Chiudi</button>
+    <button onclick="closeWordManager()">Fine</button>
 </div>
 
 <script>
-// --- Variabili globali ---
-let players = [];
+/* ======================================
+   PAROLE DI DEFAULT
+====================================== */
+const defaultWords = [
+    {main:"Pizza", infiltrator:"Pasta"},
+    {main:"Roma", infiltrator:"Milano"},
+    {main:"Drago", infiltrator:"Serpente"},
+    {main:"Acqua", infiltrator:"Latte"},
+    {main:"Aereo", infiltrator:"Elicottero"},
+    {main:"Telefono", infiltrator:"Tablet"},
+    {main:"Cinema", infiltrator:"Teatro"},
+    {main:"Squalo", infiltrator:"Delfino"},
+    {main:"Montagna", infiltrator:"Collina"},
+    {main:"Robot", infiltrator:"Drone"},
+    {main:"Gelato", infiltrator:"Sorbetto"},
+    {main:"Torre", infiltrator:"Castello"},
+    {main:"Occhiali", infiltrator:"Maschera"},
+    {main:"Luna", infiltrator:"Sole"},
+    {main:"Farfalla", infiltrator:"Mosca"}
+];
+
+/* ======================================
+   CARICAMENTO / SALVATAGGIO PAROLE
+====================================== */
+let storedWords = JSON.parse(localStorage.getItem("gameWords"));
+let randomWords = storedWords ?
+    storedWords.map(w=>({main:w.main, infiltrator:w.infiltrator||""})) :
+    [...defaultWords];
+
+/* ======================================
+   VARIABILI DI GIOCO
+====================================== */
+let names = [];
 let roles = [];
 let currentWords = [];
 let currentIndex = 0;
-let savedPlayerNames = "";
 
-// Lista parole default uniforme
-const defaultWords = [
-    {main: "Pizza", infiltrator: "Pasta"},
-    {main: "Roma", infiltrator: "Milano"},
-    {main: "Drago", infiltrator: "Serpente"},
-    {main: "Acqua", infiltrator: "Latte"},
-    {main: "Aereo", infiltrator: "Elicottero"},
-    {main: "Telefono", infiltrator: "Tablet"},
-    {main: "Cinema", infiltrator: "Teatro"},
-    {main: "Squalo", infiltrator: "Delfino"},
-    {main: "Montagna", infiltrator: "Collina"},
-    {main: "Robot", infiltrator: "Droni"},
-    {main: "Gelato", infiltrator: "Sorbetto"},
-    {main: "Torre", infiltrator: "Castello"},
-    {main: "Occhiali", infiltrator: "Maschera"},
-    {main: "Luna", infiltrator: "Sole"},
-    {main: "Farfalla", infiltrator: "Mosca"}
-];
-
-// --- Carica parole e normalizza ---
-let storedWords = JSON.parse(localStorage.getItem('gameWords'));
-if(storedWords && storedWords.length > 0) {
-    randomWords = storedWords.map(w => ({
-        main: w.main || "",
-        infiltrator: w.infiltrator || w.infiltrato || ""
-    }));
-} else {
-    randomWords = defaultWords.slice();
-}
-
-// --- Funzioni gestione parole ---
-function openWordManager() {
-    document.getElementById("setupScreen").style.display = "none";
-    document.getElementById("wordManagerScreen").style.display = "block";
-    renderWordList();
-}
-
-function renderWordList() {
-    const ul = document.getElementById("wordList");
-    ul.innerHTML = "";
-    randomWords.forEach((w, i) => {
-        const li = document.createElement("li");
-        li.textContent = `Main: ${w.main} | Infiltrato: ${w.infiltrator}`;
-        const delBtn = document.createElement("button");
-        delBtn.textContent = "Rimuovi";
-        delBtn.onclick = () => { removeWord(i); };
-        li.appendChild(delBtn);
-
-    });
-}
-
-function addWordToList() {
-    const main = document.getElementById("newMainWord").value.trim();
-    const infiltrator = document.getElementById("newInfiltratorWord").value.trim();
-    if(main && infiltrator) {
-        randomWords.push({main, infiltrator});
-        localStorage.setItem('gameWords', JSON.stringify(randomWords));
-        document.getElementById("newMainWord").value = "";
-        document.getElementById("newInfiltratorWord").value = "";
-        renderWordList();
-    } else {
-        alert("Inserisci entrambe le parole!");
-    }
-}
-
-function removeWord(index) {
-    randomWords.splice(index, 1);
-    localStorage.setItem('gameWords', JSON.stringify(randomWords));
-    renderWordList();
-}
-
-function closeWordManager() {
-    document.getElementById("wordManagerScreen").style.display = "none";
-    document.getElementById("setupScreen").style.display = "block";
-}
-
-// --- Funzioni gioco ---
+/* ======================================
+   FUNZIONI DI GIOCO
+====================================== */
 function startGame() {
-    players = document.getElementById("playerNames")
-        .value.split(",")
-        .map(p => p.trim())
-        .filter(p => p);
+    const rawNames = document.getElementById("nameInput").value;
+    names = rawNames.split(",").map(n=>n.trim()).filter(n=>n.length>0);
 
-    const numWhite = parseInt(document.getElementById("numWhite").value) || 0;
-    const numInfiltrati = parseInt(document.getElementById("numInfiltrati").value) || 0;
+    const w = parseInt(document.getElementById("numWhite").value);
+    const i = parseInt(document.getElementById("numInfiltrati").value);
 
-    if(players.length < 2) {
-        alert("Minimo 2 giocatori!");
-        return;
-    }
-    if(numWhite + numInfiltrati > players.length) {
-        alert("Numero di ruoli superiore al numero di giocatori!");
-        return;
-    }
+    if(names.length === 0) return alert("Aggiungi dei giocatori!");
+    if(w + i > names.length) return alert("Troppi ruoli speciali!");
 
-    savedPlayerNames = players.join(", ");
+    const word = randomWords[Math.floor(Math.random()*randomWords.length)];
 
-    roles = [];
-    currentWords = [];
+    const allRoles = [];
+    for(let x=0;x<w;x++) allRoles.push("Mister White");
+    for(let x=0;x<i;x++) allRoles.push("Infiltrato");
+    while(allRoles.length < names.length) allRoles.push("Normale");
 
-    let tempPlayers = [...players];
-    for(let i=0;i<numWhite;i++){
-        const idx = Math.floor(Math.random()*tempPlayers.length);
-        roles.push({name: tempPlayers[idx], role: "Mister White"});
-        tempPlayers.splice(idx,1);
-    }
-    for(let i=0;i<numInfiltrati;i++){
-        const idx = Math.floor(Math.random()*tempPlayers.length);
-        roles.push({name: tempPlayers[idx], role: "Infiltrato"});
-        tempPlayers.splice(idx,1);
-    }
-    tempPlayers.forEach(p=>{ roles.push({name: p, role: "Normale"}); });
+    roles = shuffle(allRoles).map((r,index)=>({
+        name: names[index],
+        role: r
+    }));
 
-    roles = roles.sort(() => Math.random()-0.5);
-
-    roles.forEach(r=>{
-        if(r.role === "Normale") {
-            const rand = randomWords[Math.floor(Math.random()*randomWords.length)];
-            currentWords.push(rand.main);
-        } else if(r.role === "Infiltrato") {
-            const rand = randomWords[Math.floor(Math.random()*randomWords.length)];
-            currentWords.push(rand.infiltrator);
-        } else {
-            currentWords.push(""); 
-        }
+    currentWords = roles.map(r=>{
+        if(r.role==="Mister White") return "❌ Nessuna parola";
+        if(r.role==="Infiltrato") return word.infiltrator;
+        return word.main;
     });
 
     currentIndex = 0;
-    document.getElementById("setupScreen").style.display = "none";
-    document.getElementById("finalScreen").style.display = "none";
-    document.getElementById("intermediateScreen").style.display = "none";
-    document.getElementById("roleScreen").style.display = "block";
-
-    updatePlayerScreen();
+    showScreen("roleScreen");
+    updateRoleScreen();
 }
 
-function updatePlayerScreen() {
-    document.getElementById("currentPlayer").innerText =
-        "Turno di: " + roles[currentIndex].name;
-
+function updateRoleScreen() {
+    document.getElementById("playerName").innerText = names[currentIndex];
     document.getElementById("roleText").style.display = "none";
-    document.getElementById("showRoleBtn").style.display = "block";
     document.getElementById("nextPlayerBtn").style.display = "none";
+    document.getElementById("showRoleBtn").style.display = "block";
 }
 
 function showRole() {
     const r = roles[currentIndex];
     let roleText = "";
-    
-    if (r.role === "Mister White") {
-        roleText = "❓ SEI MISTER WHITE! ❓";
+
+    if(r.role === "Mister White"){
+        roleText = "❓ SEI MISTER WHITE!";
     } else {
-        // Normale e Infiltrato vedono semplicemente la loro parola
-        roleText = `Parola: ${currentWords[currentIndex]}`;
+        roleText = "Parola: " + currentWords[currentIndex];
     }
 
     document.getElementById("roleText").innerText = roleText;
@@ -315,44 +204,89 @@ function showRole() {
     document.getElementById("nextPlayerBtn").style.display = "block";
 }
 
-}
-
 function nextPlayer() {
     currentIndex++;
-    if(currentIndex >= roles.length) {
-        document.getElementById("roleScreen").style.display = "none";
-        document.getElementById("intermediateScreen").style.display = "block";
+    if(currentIndex >= names.length) {
+        showScreen("readyScreen");
     } else {
-        updatePlayerScreen();
+        updateRoleScreen();
     }
 }
 
-function showFinalScreen() {
-    document.getElementById("intermediateScreen").style.display = "none";
-    document.getElementById("finalScreen").style.display = "block";
-
-    const summary = roles.map((r,i)=>{
-        let word = r.role === "Mister White" ? "-" : currentWords[i];
-        return `${r.name} - ${r.role} - ${word}`;
-    }).join("<br>");
-
-    document.getElementById("summaryText").innerHTML = summary;
+function showSummary() {
+    const ul = document.getElementById("summaryList");
+    ul.innerHTML = "";
+    roles.forEach(r=>{
+        const li = document.createElement("li");
+        li.innerText = `${r.name} → ${r.role}`;
+        ul.appendChild(li);
+    });
+    showScreen("summaryScreen");
 }
 
-function restartGame() {
-    players = [];
-    roles = [];
-    currentWords = [];
-    currentIndex = 0;
-
-    document.getElementById("playerNames").value = savedPlayerNames;
-    document.getElementById("finalScreen").style.display = "none";
-    document.getElementById("intermediateScreen").style.display = "none";
-    document.getElementById("roleScreen").style.display = "none";
-    document.getElementById("setupScreen").style.display = "block";
+function restart() {
+    showScreen("startScreen");
 }
+
+/* ======================================
+   GESTIONE PAROLE
+====================================== */
+function openWordManager() {
+    showScreen("wordManager");
+    renderWordList();
+}
+
+function renderWordList() {
+    const list = document.getElementById("wordList");
+    list.innerHTML = "";
+    randomWords.forEach((w,i)=>{
+        const li = document.createElement("li");
+        li.innerText = `${w.main} → ${w.infiltrator}`;
+        const btn = document.createElement("button");
+        btn.innerText = "Rimuovi";
+        btn.onclick = ()=>{ removeWord(i); };
+        li.appendChild(btn);
+        list.appendChild(li);
+    });
+}
+
+function removeWord(i) {
+    randomWords.splice(i,1);
+    saveWords();
+    renderWordList();
+}
+
+function addWord() {
+    const m = document.getElementById("addMain").value.trim();
+    const inf = document.getElementById("addInfil").value.trim();
+    if(!m || !inf) return alert("Inserisci entrambe le parole!");
+    randomWords.push({main:m, infiltrator:inf});
+    saveWords();
+    document.getElementById("addMain").value = "";
+    document.getElementById("addInfil").value = "";
+    renderWordList();
+}
+
+function closeWordManager() {
+    showScreen("startScreen");
+}
+
+function saveWords() {
+    localStorage.setItem("gameWords", JSON.stringify(randomWords));
+}
+
+/* ======================================
+   UTIL
+====================================== */
+function showScreen(id) {
+    document.querySelectorAll(".screen").forEach(s=>s.style.display="none");
+    document.getElementById(id).style.display = "block";
+}
+
+function shuffle(a) {
+    return a.sort(()=>Math.random()-0.5);
+}
+
 </script>
-
 </body>
 </html>
-
