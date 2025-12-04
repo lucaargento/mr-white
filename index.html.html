@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<!-- Manifest PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="apple-touch-icon" href="icon-192.png">
+
+<meta charset="UTF-8">
+<title>Mister White Game</title>
+
+<style>
+:root {
+    --bg: #121212;
+    --card: #1E1E1E;
+    --accent: #00D4A6;
+    --text: #EAEAEA;
+    --danger: #FF4D4D;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    text-align: center;
+    margin: 0;
+    padding: 20px;
+}
+
+h2 {
+    color: var(--accent);
+    margin-bottom: 10px;
+}
+
+input {
+    width: 90%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    margin: 10px 0;
+    font-size: 18px;
+    text-align: center;
+}
+
+.card {
+    background: var(--card);
+    padding: 20px;
+    border-radius: 15px;
+    max-width: 450px;
+    margin: 20px auto;
+    box-shadow: 0 0 15px rgba(0, 212, 166, 0.25);
+}
+
+button {
+    width: 90%;
+    max-width: 300px;
+    padding: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 15px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    background-color: var(--accent);
+    color: black;
+    transition: transform 0.2s, opacity 0.2s;
+}
+
+button:active {
+    transform: scale(0.95);
+    opacity: 0.8;
+}
+
+#roleScreen, #finalScreen {
+    display: none;
+}
+
+#roleText {
+    font-size: 26px;
+    margin-top: 20px;
+    color: var(--accent);
+    font-weight: bold;
+}
+
+#wordListContainer {
+    margin: 10px 0;
+}
+</style>
+
+</head>
+<body>
+
+<h2>Mister White Game</h2>
+
+<!-- Schermata iniziale -->
+<div class="card" id="setupScreen">
+    <p>Inserisci i nomi dei giocatori (separati da virgola):</p>
+    <input type="text" id="playerNames" placeholder="Luca, Marco, Giulia...">
+
+    <p>Parola segreta (opzionale):</p>
+    <input type="text" id="secretWord" placeholder="Lascia vuoto per parola casuale">
+
+    <p>Lista parole aggiuntive:</p>
+    <div id="wordListContainer">
+        <input type="text" id="newWord" placeholder="Aggiungi parola">
+        <button onclick="addWord()">➕ Aggiungi parola</button>
+    </div>
+
+    <button onclick="startGame()">🎲 Inizia la partita</button>
+</div>
+
+<!-- Schermata ruoli -->
+<div class="card" id="roleScreen">
+    <h3 id="currentPlayer"></h3>
+    <button id="showRoleBtn" onclick="showRole()">Mostra ruolo 🔍</button>
+    <p id="roleText" style="display:none;"></p>
+    <button id="nextPlayerBtn" onclick="nextPlayer()" style="display:none;">Giocatore successivo ➡️</button>
+</div>
+
+<!-- Schermata riepilogo finale -->
+<div class="card" id="finalScreen">
+    <h3>Riepilogo</h3>
+    <p id="summaryText"></p>
+    <button onclick="restartGame()">🔄 Nuova partita</button>
+</div>
+
+<script>
+let players = [];
+let misterWhite = "";
+let secretWord = "";
+let currentIndex = 0;
+
+// Lista parole casuali
+let randomWords = [
+    "Pizza", "Roma", "Drago", "Acqua", "Aereo",
+    "Telefono", "Cinema", "Squalo", "Montagna", "Robot",
+    "Gelato", "Torre", "Occhiali", "Luna", "Farfalla"
+];
+
+// Aggiungi parola personalizzata
+function addWord() {
+    let newWord = document.getElementById("newWord").value.trim();
+    if(newWord && !randomWords.includes(newWord)) {
+        randomWords.push(newWord);
+        alert(`Parola "${newWord}" aggiunta!`);
+        document.getElementById("newWord").value = "";
+    } else {
+        alert("Parola vuota o già presente!");
+    }
+}
+
+function startGame() {
+    players = document.getElementById("playerNames")
+                .value.split(",")
+                .map(p => p.trim())
+                .filter(p => p);
+
+    if(players.length < 3) {
+        alert("Minimo 3 giocatori!");
+        return;
+    }
+
+    let userWord = document.getElementById("secretWord").value.trim();
+    secretWord = userWord || randomWords[Math.floor(Math.random() * randomWords.length)];
+
+    misterWhite = players[Math.floor(Math.random() * players.length)];
+
+    document.getElementById("setupScreen").style.display = "none";
+    document.getElementById("roleScreen").style.display = "block";
+    currentIndex = 0;
+    updatePlayerScreen();
+}
+
+function updatePlayerScreen() {
+    document.getElementById("currentPlayer").innerText =
+        "Turno di: " + players[currentIndex];
+
+    document.getElementById("roleText").style.display = "none";
+    document.getElementById("showRoleBtn").style.display = "block";
+    document.getElementById("nextPlayerBtn").style.display = "none";
+}
+
+function showRole() {
+    let role = (players[currentIndex] === misterWhite)
+               ? "❓ SEI MISTER WHITE! ❓"
+               : "Parola: " + secretWord;
+
+    document.getElementById("roleText").innerText = role;
+    document.getElementById("roleText").style.display = "block";
+    document.getElementById("showRoleBtn").style.display = "none";
+    document.getElementById("nextPlayerBtn").style.display = "block";
+}
+
+function nextPlayer() {
+    currentIndex++;
+    if(currentIndex >= players.length) {
+        showFinalScreen();
+    } else {
+        updatePlayerScreen();
+    }
+}
+
+function showFinalScreen() {
+    document.getElementById("roleScreen").style.display = "none";
+    document.getElementById("finalScreen").style.display = "block";
+
+    document.getElementById("summaryText").innerHTML =
+        `<strong>Mister White:</strong> ${misterWhite}<br><br>` +
+        `<strong>Giocatori:</strong><br>${players.join("<br>")}`;
+}
+
+function restartGame() {
+    // Reset variabili
+    players = [];
+    misterWhite = "";
+    secretWord = "";
+    currentIndex = 0;
+
+    // Reset UI
+    document.getElementById("playerNames").value = "";
+    document.getElementById("secretWord").value = "";
+    document.getElementById("newWord").value = "";
+
+    document.getElementById("finalScreen").style.display = "none";
+    document.getElementById("setupScreen").style.display = "block";
+}
+</script>
+
+</body>
+</html>
