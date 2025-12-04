@@ -16,7 +16,6 @@ if ("serviceWorker" in navigator) {
 }
 </script>
 
-
 <title>Mister White Game</title>
 
 <style>
@@ -35,6 +34,10 @@ body {
     text-align: center;
     margin: 0;
     padding: 20px;
+    width: 100vw;
+    height: 100vh;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
 }
 
 h2 {
@@ -43,16 +46,18 @@ h2 {
 }
 
 input, input[type=number] {
+    display: block;
+    margin: 10px auto;
     width: 90%;
     padding: 12px;
     border-radius: 10px;
     border: none;
-    margin: 10px 0;
     font-size: 18px;
     text-align: center;
 }
 
 .card {
+    position: relative;
     background: var(--card);
     padding: 20px;
     border-radius: 15px;
@@ -282,18 +287,17 @@ function startGame() {
     roles = roles.sort(() => Math.random()-0.5);
 
     // Estrai UNA parola per tutta la partita
-const chosenWordPair = randomWords[Math.floor(Math.random() * randomWords.length)];
+    const chosenWordPair = randomWords[Math.floor(Math.random() * randomWords.length)];
 
-roles.forEach(r => {
-    if (r.role === "Normale") {
-        currentWords.push(chosenWordPair.main);
-    } else if (r.role === "Infiltrato") {
-        currentWords.push(chosenWordPair.infiltrator);
-    } else {
-        currentWords.push(""); // Mister White non vede niente
-    }
-});
-
+    roles.forEach(r => {
+        if (r.role === "Normale") {
+            currentWords.push(chosenWordPair.main);
+        } else if (r.role === "Infiltrato") {
+            currentWords.push(chosenWordPair.infiltrator);
+        } else {
+            currentWords.push(""); // Mister White non vede niente
+        }
+    });
 
     currentIndex = 0;
     document.getElementById("setupScreen").style.display = "none";
@@ -360,9 +364,16 @@ function restartGame() {
     document.getElementById("roleScreen").style.display = "none";
     document.getElementById("setupScreen").style.display = "block";
 }
+
+// --- Fix input focus per iOS PWA ---
+document.querySelectorAll('input').forEach(input => {
+  input.addEventListener('focus', () => {
+    setTimeout(() => {
+      input.scrollIntoView({behavior: 'smooth', block: 'center'});
+    }, 300);
+  });
+});
 </script>
 
 </body>
 </html>
-
-
