@@ -89,10 +89,12 @@ ul li button {
     background: var(--danger);
     color: white;
     margin-left: 10px;
-    padding: 3px 8px;
+    padding: 5px 10px;
     font-size: 14px;
-    border-radius: 5px;
+    border-radius: 6px;
+    cursor: pointer;
 }
+
 </style>
 </head>
 <body>
@@ -195,10 +197,10 @@ function renderWordList() {
         const li = document.createElement("li");
         li.textContent = `Main: ${w.main} | Infiltrato: ${w.infiltrator}`;
         const delBtn = document.createElement("button");
-        delBtn.textContent = "✖️";
+        delBtn.textContent = "Rimuovi";
         delBtn.onclick = () => { removeWord(i); };
         li.appendChild(delBtn);
-        ul.appendChild(li);
+
     });
 }
 
@@ -299,14 +301,20 @@ function updatePlayerScreen() {
 function showRole() {
     const r = roles[currentIndex];
     let roleText = "";
-    if(r.role === "Mister White") roleText = "❓ SEI MISTER WHITE! ❓";
-    else if(r.role === "Infiltrato") roleText = `Parola (infiltrato): ${currentWords[currentIndex]}`;
-    else roleText = `Parola: ${currentWords[currentIndex]}`;
+    
+    if (r.role === "Mister White") {
+        roleText = "❓ SEI MISTER WHITE! ❓";
+    } else {
+        // Normale e Infiltrato vedono semplicemente la loro parola
+        roleText = `Parola: ${currentWords[currentIndex]}`;
+    }
 
     document.getElementById("roleText").innerText = roleText;
     document.getElementById("roleText").style.display = "block";
     document.getElementById("showRoleBtn").style.display = "none";
     document.getElementById("nextPlayerBtn").style.display = "block";
+}
+
 }
 
 function nextPlayer() {
@@ -347,3 +355,4 @@ function restartGame() {
 
 </body>
 </html>
+
