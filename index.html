@@ -102,7 +102,7 @@ ul li button {
 <!-- Schermata iniziale -->
 <div class="card" id="setupScreen">
     <p>Inserisci i nomi dei giocatori (separati da virgola):</p>
-    <input type="text" id="playerNames" placeholder="Luca, Marco, Giulia...">
+    <input type="text" id="playerNames" placeholder="Luke, Tony, Santo...">
     <p>Numero di Mister White:</p>
     <input type="number" id="numWhite" value="1" min="0">
     <p>Numero di Infiltrati:</p>
@@ -153,21 +153,21 @@ let savedPlayerNames = "";
 
 // Lista parole default: ogni parola principale ha una parola infiltrato
 const defaultWords = [
-    {main: "Pizza", infiltrato: "Pasta"},
-    {main: "Roma", infiltrato: "Milano"},
-    {main: "Drago", infiltrato: "Serpente"},
-    {main: "Acqua", infiltrato: "Latte"},
-    {main: "Aereo", infiltrato: "Elicottero"},
-    {main: "Telefono", infiltrato: "Tablet"},
-    {main: "Cinema", infiltrato: "Teatro"},
-    {main: "Squalo", infiltrato: "Delfino"},
-    {main: "Montagna", infiltrato: "Collina"},
-    {main: "Robot", infiltrato: "Droni"},
-    {main: "Gelato", infiltrato: "Sorbetto"},
-    {main: "Torre", infiltrato: "Castello"},
-    {main: "Occhiali", infiltrato: "Maschera"},
-    {main: "Luna", infiltrato: "Sole"},
-    {main: "Farfalla", infiltrato: "Mosca"}
+    {main: "Pizza", infiltrator: "Pasta"},
+    {main: "Roma", infiltrator: "Milano"},
+    {main: "Drago", infiltrator: "Serpente"},
+    {main: "Acqua", infiltrator: "Latte"},
+    {main: "Aereo", infiltrator: "Elicottero"},
+    {main: "Telefono", infiltrator: "Tablet"},
+    {main: "Cinema", infiltrator: "Teatro"},
+    {main: "Squalo", infiltrator: "Delfino"},
+    {main: "Montagna", infiltrator: "Collina"},
+    {main: "Robot", infiltrator: "Droni"},
+    {main: "Gelato", infiltrator: "Sorbetto"},
+    {main: "Torre", infiltrator: "Castello"},
+    {main: "Occhiali", infiltrator: "Maschera"},
+    {main: "Luna", infiltrator: "Sole"},
+    {main: "Farfalla", infiltrator: "Mosca"}
 ];
 
 // Carica parole da localStorage o default
@@ -349,3 +349,4 @@ function restartGame() {
 
 </body>
 </html>
+
