@@ -170,8 +170,16 @@ const defaultWords = [
     {main: "Farfalla", infiltrator: "Mosca"}
 ];
 
-// Carica parole da localStorage o default
-let randomWords = JSON.parse(localStorage.getItem('gameWords')) || defaultWords.slice();
+// --- Carica parole e normalizza ---
+let storedWords = JSON.parse(localStorage.getItem('gameWords'));
+if(storedWords && storedWords.length > 0) {
+    randomWords = storedWords.map(w => ({
+        main: w.main || "",
+        infiltrator: w.infiltrator || w.infiltrato || ""
+    }));
+} else {
+    randomWords = defaultWords.slice();
+}
 
 // --- Funzioni gestione parole ---
 function openWordManager() {
@@ -240,34 +248,24 @@ function startGame() {
 
     savedPlayerNames = players.join(", ");
 
-    // Reset ruoli e parole
     roles = [];
     currentWords = [];
 
-    // Assegna Mister White
     let tempPlayers = [...players];
     for(let i=0;i<numWhite;i++){
         const idx = Math.floor(Math.random()*tempPlayers.length);
         roles.push({name: tempPlayers[idx], role: "Mister White"});
         tempPlayers.splice(idx,1);
     }
-
-    // Assegna Infiltrati
     for(let i=0;i<numInfiltrati;i++){
         const idx = Math.floor(Math.random()*tempPlayers.length);
         roles.push({name: tempPlayers[idx], role: "Infiltrato"});
         tempPlayers.splice(idx,1);
     }
+    tempPlayers.forEach(p=>{ roles.push({name: p, role: "Normale"}); });
 
-    // Assegna giocatori normali
-    tempPlayers.forEach(p=>{
-        roles.push({name: p, role: "Normale"});
-    });
-
-    // Mischia i ruoli
     roles = roles.sort(() => Math.random()-0.5);
 
-    // Assegna parole
     roles.forEach(r=>{
         if(r.role === "Normale") {
             const rand = randomWords[Math.floor(Math.random()*randomWords.length)];
@@ -276,7 +274,7 @@ function startGame() {
             const rand = randomWords[Math.floor(Math.random()*randomWords.length)];
             currentWords.push(rand.infiltrator);
         } else {
-            currentWords.push(""); // Mister White non vede parola
+            currentWords.push(""); 
         }
     });
 
