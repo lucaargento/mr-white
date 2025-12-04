@@ -102,7 +102,7 @@ ul li button {
 <!-- Schermata iniziale -->
 <div class="card" id="setupScreen">
     <p>Inserisci i nomi dei giocatori (separati da virgola):</p>
-    <input type="text" id="playerNames" placeholder="Luke, Tony, Santo...">
+    <input type="text" id="playerNames" placeholder="Luca, Marco, Giulia...">
     <p>Numero di Mister White:</p>
     <input type="number" id="numWhite" value="1" min="0">
     <p>Numero di Infiltrati:</p>
@@ -146,12 +146,12 @@ ul li button {
 <script>
 // --- Variabili globali ---
 let players = [];
-let roles = []; // ruoli dei giocatori
-let currentWords = []; // parole assegnate per giocatori
+let roles = [];
+let currentWords = [];
 let currentIndex = 0;
 let savedPlayerNames = "";
 
-// Lista parole default: ogni parola principale ha una parola infiltrato
+// Lista parole default uniforme
 const defaultWords = [
     {main: "Pizza", infiltrator: "Pasta"},
     {main: "Roma", infiltrator: "Milano"},
@@ -349,5 +349,3 @@ function restartGame() {
 
 </body>
 </html>
-
-
