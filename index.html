@@ -1,394 +1,520 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<!-- Manifest PWA -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mister White — Dark (tema)</title>
 <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#07121a">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="apple-touch-icon" href="icon-192.png">
 
-<meta charset="UTF-8">
-<title>Mister White Game</title>
-
 <style>
-    :root {
-        --main-bg: #222;
-        --card-bg: #333;
-        --accent: #4CAF50;
-        --danger: #c0392b;
-        --text: #fff;
-    }
-    body {
-        margin: 0;
-        background: var(--main-bg);
-        color: var(--text);
-        font-family: Arial, sans-serif;
-        text-align: center;
-    }
-    .screen {
-        display: none;
-        padding: 20px;
-    }
-    button {
-        padding: 10px 18px;
-        margin: 10px;
-        border: none;
-        border-radius: 8px;
-        background: var(--accent);
-        color: white;
-        font-size: 16px;
-        cursor: pointer;
-    }
-    button.danger { background: var(--danger); }
-    input {
-        padding: 10px;
-        margin: 5px;
-        width: 80%;
-        max-width: 300px;
-        border-radius: 6px;
-        border: none;
-        font-size: 16px; 
-    }
-    ul { list-style: none; padding: 0; }
-    li {
-        margin: 8px 0;
-        padding: 10px;
-        background: var(--card-bg);
-        border-radius: 6px;
-    }
-    ul li button {
-        background: var(--danger);
-        color: white;
-        margin-left: 10px;
-        padding: 5px 10px;
-        font-size: 14px;
-        border-radius: 6px;
-        cursor: pointer;
-    }
+:root{
+  --bg:#03060a;
+  --card:#0e1418;
+  --muted:#90a7b5;
+  --accent:#00E1FF; /* neon blu */
+  --danger:#ff4d6d;
+  --glass: rgba(255,255,255,0.03);
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:linear-gradient(180deg,#02040a,#051225);font-family:Inter,system-ui,Segoe UI,Roboto,Arial;color:#E6F7FF}
+.container{max-width:760px;margin:12px auto;padding:12px}
+.header{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.02)}
+.title{display:flex;gap:12px;align-items:center}
+.logo{width:44px;height:44px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#7ff7ff);display:flex;align-items:center;justify-content:center;color:#001020;font-weight:800}
+.h1{font-size:18px;font-weight:700}
+.sub{font-size:12px;color:var(--muted)}
+
+.card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));padding:16px;border-radius:12px;margin-top:12px;border:1px solid rgba(255,255,255,0.02)}
+label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+input[type="text"], input[type="number"], input[type="search"]{
+  width:100%;padding:12px;border-radius:10px;border:none;background:rgba(255,255,255,0.02);color:#E6F7FF;font-size:16px;outline:none;
+}
+.row{display:flex;gap:10px;align-items:center}
+.small{font-size:13px;color:var(--muted)}
+.controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.button{
+  background:linear-gradient(90deg,var(--accent),#7ff7ff);
+  color:#012;padding:10px 14px;border-radius:10px;border:none;font-weight:700;cursor:pointer;
+}
+.button.ghost{background:transparent;color:var(--accent);border:1px solid rgba(0,225,255,0.06)}
+.button.danger{background:linear-gradient(90deg,var(--danger),#ff7e9a);color:#140005}
+.toggle{display:inline-flex;align-items:center;gap:8px}
+.switch{
+  width:46px;height:26px;border-radius:18px;background:rgba(255,255,255,0.05);position:relative;cursor:pointer;border:1px solid rgba(255,255,255,0.02)
+}
+.knob{width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;left:3px;top:3px;transition:left .14s}
+.switch.on{background:linear-gradient(90deg,var(--accent),#60f0ff)}
+.switch.on .knob{left:23px;background:#012}
+
+.screen{display:none}
+.screen.active{display:block}
+
+/* list */
+.list{list-style:none;padding:0;margin:0}
+.list li{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:8px;background:rgba(255,255,255,0.02);margin-bottom:8px}
+.role{font-size:13px;color:var(--muted)}
+.hint-pill{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(0,225,255,0.04);color:var(--accent);font-weight:700;border:1px solid rgba(0,225,255,0.04)}
+
+/* footer */
+.footer{margin-top:12px;font-size:13px;color:var(--muted);text-align:center}
 </style>
 </head>
-
 <body>
+<div class="container">
+  <div class="header">
+    <div class="title">
+      <div class="logo">MW</div>
+      <div>
+        <div class="h1">Mister White</div>
+        <div class="sub">Dark • Tema (mostrabile)</div>
+      </div>
+    </div>
+    <div class="small">v1.2</div>
+  </div>
 
-<div id="startScreen" class="screen" style="display:block;">
-    <h1>Mister White</h1>
-    <p>Inserisci i nomi dei giocatori (separati da virgole)</p>
-    <input id="nameInput" placeholder="Es: Luca, Marco, Sara">
-    <p>Numero Mister White:</p>
-    <input id="numWhite" type="number" min="0" value="1">
-    <p>Numero Infiltrati:</p>
-    <input id="numInfiltrati" type="number" min="0" value="1">
-    <button onclick="startGame()">Inizia</button>
-    <br>
-    <button onclick="openWordManager()">Gestione Parole</button>
-</div>
+  <!-- SETUP -->
+  <div id="setupScreen" class="card screen active">
+    <label>Inserisci i nomi dei giocatori (separati da virgola)</label>
+    <input id="nameInput" type="text" placeholder="Es: Luca, Marco, Sara">
+    <div style="display:flex;gap:10px;margin-top:10px">
+      <div style="flex:1">
+        <label>Numero Mister White</label>
+        <input id="numWhite" type="number" min="0" value="1">
+      </div>
+      <div style="flex:1">
+        <label>Numero Infiltrati</label>
+        <input id="numInfiltrati" type="number" min="0" value="1">
+      </div>
+    </div>
 
-<div id="roleScreen" class="screen">
-    <h2 id="playerName"></h2>
-    <button id="showRoleBtn" onclick="showRole()">Mostra</button>
-    <p id="roleText" style="display:none;font-size:24px;font-weight:bold;"></p>
-    <button id="nextPlayerBtn" onclick="nextPlayer()" style="display:none;">Avanti</button>
-</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px">
+      <div class="toggle">
+        <div style="font-size:13px;color:var(--muted);margin-right:8px">Mostra Tema a Mister White</div>
+        <div id="hintSwitch" class="switch" onclick="toggleHint()"><div class="knob"></div></div>
+      </div>
+      <div class="small">Se ON Mister White vedrà: <span class="hint-pill">Tema: ...</span></div>
+    </div>
 
-<div id="readyScreen" class="screen">
-    <h2>TUTTI HANNO VISTO IL RUOLO</h2>
-    <p>Quando siete pronti...</p>
-    <button onclick="showSummary()">Inizia Discussione</button>
-</div>
+    <div class="controls" style="margin-top:14px">
+      <button class="button" onclick="startGame()">🎲 Inizia la partita</button>
+      <button class="button ghost" onclick="openWordManager()">📝 Visualizza parole</button>
+      <button class="button ghost" onclick="openReview()">🔍 Rivedi la tua parola</button>
+    </div>
+    <div class="small" style="margin-top:8px">Nota: le parole si gestiscono dall'elenco (rimuovi) — non è possibile aggiungerne dall'app.</div>
+  </div>
 
-<div id="summaryScreen" class="screen">
-    <h2>Riepilogo</h2>
-    <ul id="summaryList"></ul>
-    <button onclick="restart()">Nuova Partita</button>
-</div>
+  <!-- ROLE -->
+  <div id="roleScreen" class="card screen">
+    <div style="margin-bottom:8px" class="small">Mostra il ruolo al giocatore indicato (in segreto)</div>
+    <div style="text-align:center">
+      <div id="playerName" style="font-weight:800;font-size:20px;margin-bottom:12px"></div>
+      <button id="revealBtn" class="button" onclick="revealRole()">Mostra ruolo</button>
+      <div id="roleText" style="margin-top:12px;font-weight:800;font-size:18px;color:var(--accent);display:none"></div>
+      <div style="margin-top:12px">
+        <button id="nextBtn" class="button ghost" style="display:none" onclick="nextPlayer()">➡️ Prossimo</button>
+      </div>
+    </div>
+    <div class="small" style="margin-top:12px">Dopo che tutti hanno visto il ruolo, viene mostrata la schermata con chi inizia.</div>
+  </div>
 
-<div id="wordManager" class="screen">
-    <h2>Gestione Parole</h2>
-    <ul id="wordList"></ul>
-    <hr>
-    <h3>Aggiungi nuova parola</h3>
-    <input id="addMain" placeholder="Parola principale">
-    <input id="addInfil" placeholder="Parola infiltrato">
-    <button onclick="addWord()">Aggiungi</button>
-    <br><br>
-    <button onclick="closeWordManager()">Fine</button>
+  <!-- READY (order + starting player) -->
+  <div id="readyScreen" class="card screen">
+    <h3 style="margin-top:0">Tutti hanno visto il ruolo</h3>
+    <div class="small">Ordine di gioco (mescolato)</div>
+    <div id="orderList" style="margin:10px 0"></div>
+    <div class="small">Inizia</div>
+    <div id="startingPlayer" style="font-weight:800;color:var(--accent);margin-top:6px"></div>
+
+    <div style="margin-top:12px" class="controls">
+      <button class="button" onclick="beginDiscussion()">➡️ Inizia Discussione</button>
+      <button class="button ghost" onclick="reviewRound()">🔁 Rivedi le parole (ripeti giro)</button>
+    </div>
+  </div>
+
+  <!-- SUMMARY -->
+  <div id="summaryScreen" class="card screen">
+    <h3 style="margin-top:0">Riepilogo</h3>
+    <ul id="summaryList" class="list" style="margin-top:8px"></ul>
+    <div style="margin-top:12px" class="controls">
+      <button class="button" onclick="restart()">🔄 Nuova partita</button>
+      <button class="button ghost" onclick="reviewRound()">🔁 Rivedi le parole (ripeti giro)</button>
+      <button class="button ghost" onclick="openWordManager()">📝 Parole</button>
+    </div>
+  </div>
+
+  <!-- WORD MANAGER (view + remove only) -->
+  <div id="wordManagerScreen" class="card screen">
+    <h3 style="margin-top:0">Elenco parole (tema incluso)</h3>
+    <ul id="wordList" class="list" style="margin-top:8px"></ul>
+    <div style="margin-top:12px" class="controls">
+      <button class="button ghost" onclick="closeWordManager()">Chiudi</button>
+    </div>
+    <div class="small" style="margin-top:8px">Puoi rimuovere coppie, ma non aggiungerne dall'app.</div>
+  </div>
+
+  <!-- REVIEW (single name -> shows role/word for that name if game started) -->
+  <div id="reviewScreen" class="card screen">
+    <h3 style="margin-top:0">Rivedi la tua parola</h3>
+    <label>Inserisci il tuo nome (esattamente come nella lista)</label>
+    <input id="reviewName" type="text" placeholder="Es: Luca">
+    <div style="margin-top:10px" class="controls">
+      <button class="button" onclick="doReview()">Mostra la mia parola</button>
+      <button class="button ghost" onclick="closeReview()">Chiudi</button>
+    </div>
+    <div id="reviewResult" style="margin-top:12px;font-weight:700;color:var(--accent)"></div>
+  </div>
+
+  <div class="footer small">Consiglio: aggiungi la PWA alla Home - migliora l'esperienza standalone.</div>
 </div>
 
 <script>
-/* ======================================
-   PAROLE DI DEFAULT
-====================================== */
+/* =========================
+   DATI PAROLE (format: {main, infiltrator, tema})
+   Se ci sono parole salvate in localStorage le usiamo (ma controlleremo formato)
+   ========================= */
 const defaultWords = [
-   {main:"Pizza", infiltrator:"Pasta"}, 
-{main:"Roma", infiltrator:"Milano"}, 
-{main:"Drago", infiltrator:"Serpente"}, 
-{main:"Acqua", infiltrator:"Latte"}, 
-{main:"Aereo", infiltrator:"Elicottero"}, 
-{main:"Telefono", infiltrator:"Tablet"}, 
-{main:"Cinema", infiltrator:"Teatro"}, 
-{main:"Squalo", infiltrator:"Delfino"}, 
-{main:"Montagna", infiltrator:"Collina"}, 
-{main:"Robot", infiltrator:"Drone"}, 
-{main:"Gelato", infiltrator:"Sorbetto"}, 
-{main:"Torre", infiltrator:"Castello"}, 
-{main:"Occhiali", infiltrator:"Maschera"}, 
-{main:"Luna", infiltrator:"Sole"}, 
-{main:"Farfalla", infiltrator:"Mosca"}, 
-
-{main:"Calcio", infiltrator:"Stadio"},
-{main:"Biscotto", infiltrator:"Latte"},
-{main:"Panda", infiltrator:"Bambù"},
-{main:"Chitarra", infiltrator:"Concerto"},
-{main:"Neve", infiltrator:"Sci"},
-{main:"Caffè", infiltrator:"Tazzina"},
-{main:"Specchio", infiltrator:"Principessa"},
-{main:"Computer", infiltrator:"Tastiera"},
-{main:"Televisione", infiltrator:"Telecomando"},
-{main:"Chiave", infiltrator:"Serratura"},
-{main:"Pesce", infiltrator:"Amo"},
-{main:"Cane", infiltrator:"Guinzaglio"},
-{main:"Pirata", infiltrator:"Tesoro"},
-{main:"Ape", infiltrator:"Polline"},
-{main:"Auto", infiltrator:"Benzina"},
-
-{main:"Fragola", infiltrator:"Panna"},
-{main:"Re", infiltrator:"Corona"},
-{main:"Ombrello", infiltrator:"Pioggia"},
-{main:"Tartaruga", infiltrator:"Guscio"},
-{main:"Spada", infiltrator:"Scudo"},
-{main:"Musica", infiltrator:"Cuffie"},
-{main:"Astronauta", infiltrator:"Spazio"},
-{main:"Pinguino", infiltrator:"Ghiaccio"},
-{main:"Uovo", infiltrator:"Gallina"},
-{main:"Ambulanza", infiltrator:"Ospedale"},
-{main:"Penna", infiltrator:"Quaderno"},
-{main:"Vino", infiltrator:"Uva"},
-{main:"Palloncino", infiltrator:"Festa"},
-{main:"Clown", infiltrator:"Circo"},
-{main:"Miele", infiltrator:"Alveare"},
-
-{main:"Finestra", infiltrator:"Vetro"},
-{main:"Fiamma", infiltrator:"Candela"},
-{main:"Nave", infiltrator:"Porto"},
-{main:"Palestra", infiltrator:"Pesi"},
-{main:"Volpe", infiltrator:"Tana"},
-{main:"Pupazzo", infiltrator:"Carota"},
-{main:"Surf", infiltrator:"Onda"},
-{main:"Vampiro", infiltrator:"Sangue"},
-{main:"Martello", infiltrator:"Chiodo"},
-{main:"Occhio", infiltrator:"Sopracciglio"},
-{main:"Zaino", infiltrator:"Scuola"},
-{main:"Semaforo", infiltrator:"Strada"},
-{main:"Torcia", infiltrator:"Batteria"},
-{main:"Razzo", infiltrator:"Luna"},
-{main:"Sale", infiltrator:"Patatine"},
-
-{main:"Sirena", infiltrator:"Oceano"},
-{main:"Guanto", infiltrator:"Mano"},
-{main:"Banana", infiltrator:"Scimmia"},
-{main:"Tenda", infiltrator:"Campeggio"},
-{main:"Gelatina", infiltrator:"Piatto"},
-{main:"Letto", infiltrator:"Cuscino"},
-{main:"Farfalla", infiltrator:"Nettare"},
-{main:"Cappello", infiltrator:"Testa"},
-{main:"Dente", infiltrator:"Spazzolino"},
-{main:"Orecchio", infiltrator:"Musica"},
-{main:"Pupazzo di neve", infiltrator:"Carota"},
-{main:"Arancia", infiltrator:"Spremuta"},
-{main:"Taxi", infiltrator:"Città"},
-{main:"Pesca", infiltrator:"Retino"},
-{main:"Sedia", infiltrator:"Tavolo"},
-
-{main:"Giungla", infiltrator:"Liana"},
-{main:"Pomodoro", infiltrator:"Pasta"},
-{main:"Semina", infiltrator:"Raccolto"},
-{main:"Tigre", infiltrator:"Strisce"},
-{main:"Lavatrice", infiltrator:"Detersivo"},
-{main:"Sabbia", infiltrator:"Castello"},
-{main:"Pizza", infiltrator:"Pomodoro"},
-{main:"Lago", infiltrator:"Barca"},
-{main:"Birra", infiltrator:"Bicchiere"},
-{main:"Borsa", infiltrator:"Soldi"},
-{main:"Barella", infiltrator:"Pronto soccorso"},
-{main:"Scoiattolo", infiltrator:"Nocciole"},
-{main:"Pagliaccio", infiltrator:"Naso rosso"},
-{main:"Vulcano", infiltrator:"Lava"},
-{main:"Carta", infiltrator:"Forbici"}
-
+{main:"Pizza", infiltrator:"Pasta", tema:"Cibo"},
+{main:"Roma", infiltrator:"Milano", tema:"Città"},
+{main:"Drago", infiltrator:"Serpente", tema:"Fantasy"},
+{main:"Acqua", infiltrator:"Latte", tema:"Bevande"},
+{main:"Aereo", infiltrator:"Elicottero", tema:"Trasporto"},
+{main:"Telefono", infiltrator:"Tablet", tema:"Tecnologia"},
+{main:"Cinema", infiltrator:"Teatro", tema:"Intrattenimento"},
+{main:"Squalo", infiltrator:"Delfino", tema:"Animali"},
+{main:"Montagna", infiltrator:"Collina", tema:"Luoghi"},
+{main:"Robot", infiltrator:"Drone", tema:"Tecnologia"},
+{main:"Gelato", infiltrator:"Sorbetto", tema:"Cibo"},
+{main:"Torre", infiltrator:"Castello", tema:"Edifici"},
+{main:"Occhiali", infiltrator:"Maschera", tema:"Accessori"},
+{main:"Luna", infiltrator:"Sole", tema:"Cielo"},
+{main:"Farfalla", infiltrator:"Mosca", tema:"Insetti"},
+{main:"Cane", infiltrator:"Lupo", tema:"Animali"},
+{main:"Mela", infiltrator:"Pera", tema:"Cibo"},
+{main:"Mare", infiltrator:"Oceano", tema:"Luoghi"},
+{main:"Auto", infiltrator:"Moto", tema:"Trasporto"},
+{main:"Libro", infiltrator:"Rivista", tema:"Lettura"},
+{main:"Caffè", infiltrator:"Tè", tema:"Bevande"},
+{main:"Biscotto", infiltrator:"Tortina", tema:"Cibo"},
+{main:"Scuola", infiltrator:"Università", tema:"Luoghi"},
+{main:"Bicicletta", infiltrator:"Monopattino", tema:"Trasporto"},
+{main:"Banana", infiltrator:"Cocco", tema:"Cibo"},
+{main:"Fiume", infiltrator:"Lago", tema:"Luoghi"},
+{main:"Dinosauro", infiltrator:"Dragone", tema:"Fantasy"},
+{main:"Pollo", infiltrator:"Tacchino", tema:"Cibo"},
+{main:"Sedia", infiltrator:"Poltrona", tema:"Mobili"},
+{main:"Penna", infiltrator:"Matita", tema:"Cancelleria"},
+{main:"Pesce", infiltrator:"Crostaceo", tema:"Cibo"},
+{main:"Scarpa", infiltrator:"Stivale", tema:"Abbigliamento"},
+{main:"Gatto", infiltrator:"Tigre", tema:"Animali"},
+{main:"Nuvola", infiltrator:"Fumo", tema:"Cielo"},
+{main:"Sale", infiltrator:"Zucchero", tema:"Ingrediente"},
+{main:"Vino", infiltrator:"Birra", tema:"Bevande"},
+{main:"Letto", infiltrator:"Divano", tema:"Mobili"},
+{main:"Occhio", infiltrator:"Vista", tema:"Corpo"},
+{main:"Cielo", infiltrator:"Cosmo", tema:"Cielo"},
+{main:"Orologio", infiltrator:"Sveglia", tema:"Oggetti"},
+{main:"Re", infiltrator:"Principe", tema:"Titoli"},
+{main:"Ape", infiltrator:"Vespa", tema:"Insetti"},
+{main:"Vestito", infiltrator:"Maglia", tema:"Abbigliamento"},
+{main:"Computer", infiltrator:"Tablet", tema:"Tecnologia"},
+{main:"Finestra", infiltrator:"Porta", tema:"Edifici"},
+{main:"Pane", infiltrator:"Panino", tema:"Cibo"},
+{main:"Martello", infiltrator:"Mazza", tema:"Utensili"},
+{main:"Campana", infiltrator:"Gong", tema:"Strumenti"},
+{main:"Cervo", infiltrator:"Renna", tema:"Animali"},
+{main:"Telecomando", infiltrator:"Joystick", tema:"Elettronica"},
+{main:"Musica", infiltrator:"Canzone", tema:"Intrattenimento"},
+{main:"Chitarra", infiltrator:"Ukulele", tema:"Strumenti"},
+{main:"Aquila", infiltrator:"Falco", tema:"Animali"},
+{main:"Foresta", infiltrator:"Bosco", tema:"Luoghi"},
+{main:"Gufo", infiltrator:"Civetta", tema:"Animali"},
+{main:"Pinguino", infiltrator:"Foca", tema:"Animali"},
+{main:"Uovo", infiltrator:"Gallina", tema:"Cibo"},
+{main:"Carota", infiltrator:"Zucchina", tema:"Cibo"},
+{main:"Pianoforte", infiltrator:"Tastiera", tema:"Strumenti"},
+{main:"Treno", infiltrator:"Binario", tema:"Trasporto"},
+{main:"Taxi", infiltrator:"Autista", tema:"Trasporto"},
+{main:"Isola", infiltrator:"Spiaggia", tema:"Luoghi"},
+{main:"Poesia", infiltrator:"Romanzo", tema:"Lettura"},
+{main:"Film", infiltrator:"Serie", tema:"Intrattenimento"},
+{main:"Pizza", infiltrator:"Calzone", tema:"Cibo"},
+{main:"Sorcio", infiltrator:"Topo", tema:"Animali"},
+{main:"Squalo", infiltrator:"Balena", tema:"Animali"},
+{main:"Tennis", infiltrator:"Padel", tema:"Sport"},
+{main:"Calcio", infiltrator:"Basket", tema:"Sport"},
+{main:"Golf", infiltrator:"Cricket", tema:"Sport"},
+{main:"Gioco", infiltrator:"Puzzle", tema:"Intrattenimento"},
+{main:"Barca", infiltrator:"Nave", tema:"Trasporto"},
+{main:"Ombrello", infiltrator:"Impermeabile", tema:"Oggetti"},
+{main:"Lampada", infiltrator:"Lanterna", tema:"Oggetti"},
+{main:"Gelato", infiltrator:"Sorbetto", tema:"Cibo"},
+{main:"Torta", infiltrator:"Crostata", tema:"Cibo"},
+{main:"Cane", infiltrator:"Volpe", tema:"Animali"},
+{main:"Piantina", infiltrator:"Fiore", tema:"Piante"},
+{main:"Telefono", infiltrator:"Smartwatch", tema:"Tecnologia"},
+{main:"Fotocamera", infiltrator:"GoPro", tema:"Tecnologia"},
+{main:"Robot", infiltrator:"Automa", tema:"Tecnologia"},
+{main:"Faro", infiltrator:"Lanterna", tema:"Luoghi"},
+{main:"Spada", infiltrator:"Arco", tema:"Armi"},
+{main:"Piuma", infiltrator:"Penna", tema:"Oggetti"},
+{main:"Scrivania", infiltrator:"Tavolo", tema:"Mobili"},
+{main:"Zaino", infiltrator:"Valigia", tema:"Oggetti"},
+{main:"Specchio", infiltrator:"Vetro", tema:"Oggetti"},
+{main:"Guanto", infiltrator:"Mittens", tema:"Abbigliamento"},
+{main:"Carrozza", infiltrator:"Trattore", tema:"Trasporto"},
+{main:"Corsa", infiltrator:"Camminata", tema:"Attività"},
+{main:"Balestra", infiltrator:"Fionda", tema:"Armi"},
+{main:"Stivale", infiltrator:"Scarpa", tema:"Abbigliamento"},
+{main:"Tesoro", infiltrator:"Scrigno", tema:"Oggetti"},
+{main:"Vulcano", infiltrator:"Montagna", tema:"Luoghi"},
+{main:"Caldron", infiltrator:"Pentola", tema:"Cucina"},
+{main:"Fiume", infiltrator:"Ruscello", tema:"Luoghi"},
+{main:"Culla", infiltrator:"Letto", tema:"Mobili"},
+{main:"Campione", infiltrator:"Vincitore", tema:"Personaggi"}
 ];
 
-/* ======================================
-   CARICAMENTO / SALVATAGGIO PAROLE
-====================================== */
-let storedWords = JSON.parse(localStorage.getItem("gameWords"));
-let randomWords = storedWords ?
-    storedWords.map(w=>({main:w.main, infiltrator:w.infiltrator||""})) :
-    [...defaultWords];
+let stored = JSON.parse(localStorage.getItem('gameWords'));
+let words = Array.isArray(stored) && stored.length>0 ? stored : defaultWords.slice();
 
-/* ======================================
-   VARIABILI DI GIOCO
-====================================== */
-let names = [];
-let roles = [];
-let currentWords = [];
+/* =========================
+   STATO GIOCO
+   ========================= */
+let players = []; // names array (shuffled)
+let roles = [];   // array of {name, role}
+let currentWords = []; // array of strings per role index
 let currentIndex = 0;
+let hintEnabled = JSON.parse(localStorage.getItem('hintEnabled')) || false;
+setHintUI();
 
-/* ======================================
-   FUNZIONI DI GIOCO
-====================================== */
-function startGame() {
-    const rawNames = document.getElementById("nameInput").value;
-    names = rawNames.split(",").map(n=>n.trim()).filter(n=>n.length>0);
+/* =========================
+   UI helpers
+   ========================= */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
 
-    const w = parseInt(document.getElementById("numWhite").value);
-    const i = parseInt(document.getElementById("numInfiltrati").value);
+/* hint toggle */
+function setHintUI(){
+  const el = document.getElementById('hintSwitch');
+  if(!el) return;
+  if(hintEnabled) el.classList.add('on'); else el.classList.remove('on');
+}
+function toggleHint(){
+  hintEnabled = !hintEnabled;
+  localStorage.setItem('hintEnabled', JSON.stringify(hintEnabled));
+  setHintUI();
+}
 
-    if(names.length === 0) return alert("Aggiungi dei giocatori!");
-    if(w + i > names.length) return alert("Troppi ruoli speciali!");
+/* =========================
+   WORD MANAGER (view + remove)
+   ========================= */
+function renderWordList(){
+  const ul = document.getElementById('wordList');
+  ul.innerHTML = '';
+  words.forEach((w,i)=>{
+    const li = document.createElement('li');
+    const left = document.createElement('div');
+    left.innerHTML = `<strong>${w.main}</strong> → <span class="small">${w.infiltrator}</span><div class="small" style="margin-top:6px;color:var(--muted)">Tema: ${w.tema}</div>`;
+    const right = document.createElement('div');
+    const btn = document.createElement('button');
+    btn.className = 'button ghost';
+    btn.textContent = 'Rimuovi';
+    btn.onclick = ()=>{ if(confirm('Rimuovere questa coppia?')){ words.splice(i,1); localStorage.setItem('gameWords', JSON.stringify(words)); renderWordList(); } };
+    right.appendChild(btn);
+    li.appendChild(left);
+    li.appendChild(right);
+    ul.appendChild(li);
+  });
+}
+function openWordManager(){ renderWordList(); showScreen('wordManagerScreen'); }
+function closeWordManager(){ showScreen('setupScreen'); }
 
-    const word = randomWords[Math.floor(Math.random()*randomWords.length)];
+/* =========================
+   START GAME
+   ========================= */
+function startGame(){
+  const raw = document.getElementById('nameInput').value || '';
+  let names = raw.split(',').map(s=>s.trim()).filter(s=>s.length>0);
+  const w = parseInt(document.getElementById('numWhite').value) || 0;
+  const inf = parseInt(document.getElementById('numInfiltrati').value) || 0;
+  if(names.length === 0){ alert('Aggiungi almeno un giocatore'); return; }
+  if(w + inf > names.length){ alert('Troppi ruoli speciali per il numero di giocatori'); return; }
 
-    const allRoles = [];
-    for(let x=0;x<w;x++) allRoles.push("Mister White");
-    for(let x=0;x<i;x++) allRoles.push("Infiltrato");
-    while(allRoles.length < names.length) allRoles.push("Normale");
+  // shuffle names
+  players = shuffle(names.slice());
 
-    roles = shuffle(allRoles).map((r,index)=>({
-        name: names[index],
-        role: r
-    }));
+  // prepare roles list and shuffle roles
+  const rlist = [];
+  for(let i=0;i<w;i++) rlist.push('Mister White');
+  for(let i=0;i<inf;i++) rlist.push('Infiltrato');
+  while(rlist.length < players.length) rlist.push('Normale');
+  const shuffledRoles = shuffle(rlist.slice());
 
-    currentWords = roles.map(r=>{
-        if(r.role==="Mister White") return "❌ Nessuna parola";
-        if(r.role==="Infiltrato") return word.infiltrator;
-        return word.main;
-    });
+  roles = players.map((nm, idx)=>({ name: nm, role: shuffledRoles[idx] }));
 
-    currentIndex = 0;
-    showScreen("roleScreen");
+  // choose one pair for this round (keeps pairing coherent)
+  const pair = words[Math.floor(Math.random() * words.length)];
+  // prepare currentWords aligned with roles array
+  currentWords = roles.map(r=>{
+    if(r.role === 'Mister White') return ''; // Mister White sees no word (but may see Theme)
+    if(r.role === 'Infiltrato') return pair.infiltrator;
+    return pair.main;
+  });
+
+  // save current pair to session for hint purposes
+  window._currentPair = pair;
+
+  currentIndex = 0;
+  updateRoleScreen();
+  showScreen('roleScreen');
+}
+
+/* =========================
+   ROLE FLOW
+   ========================= */
+function updateRoleScreen(){
+  if(!roles || roles.length===0) return;
+  const name = roles[currentIndex].name;
+  document.getElementById('playerName').innerText = name;
+  document.getElementById('roleText').style.display = 'none';
+  document.getElementById('revealBtn').style.display = 'inline-block';
+  document.getElementById('nextBtn').style.display = 'none';
+}
+
+function revealRole(){
+  const r = roles[currentIndex];
+  const el = document.getElementById('roleText');
+
+  if(r.role === 'Mister White'){
+    // must always show explicit text "SEI MISTER WHITE!"
+    if(hintEnabled && window._currentPair && window._currentPair.tema){
+      el.innerText = `❓ SEI MISTER WHITE!\nTema: ${window._currentPair.tema}`;
+    } else {
+      el.innerText = `❓ SEI MISTER WHITE!\nProva a indovinare la parola degli altri.`;
+    }
+  } else {
+    // Normale & Infiltrato see their assigned word; infiltrato does not see role label
+    el.innerText = `Parola: ${currentWords[currentIndex]}`;
+  }
+
+  el.style.whiteSpace = 'pre-line';
+  el.style.display = 'block';
+  document.getElementById('revealBtn').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'inline-block';
+}
+
+function nextPlayer(){
+  currentIndex++;
+  if(currentIndex >= roles.length){
+    // prepare play order (reshuffle players for play) and show starter
+    const playOrder = shuffle(players.slice());
+    const orderListEl = document.getElementById('orderList');
+    orderListEl.innerHTML = playOrder.map((n,i)=>`<div style="padding:8px;background:rgba(255,255,255,0.02);border-radius:8px;margin-bottom:6px"><strong style="color:var(--accent)">${i+1}.</strong> <span style="margin-left:8px">${n}</span></div>`).join('');
+    document.getElementById('startingPlayer').innerText = playOrder[0];
+    // store playOrder for potential use
+    window._playOrder = playOrder;
+    showScreen('readyScreen');
+  } else {
     updateRoleScreen();
+  }
 }
 
-function updateRoleScreen() {
-    document.getElementById("playerName").innerText = names[currentIndex];
-    document.getElementById("roleText").style.display = "none";
-    document.getElementById("nextPlayerBtn").style.display = "none";
-    document.getElementById("showRoleBtn").style.display = "block";
+/* =========================
+   BEGIN DISCUSSION & SUMMARY
+   ========================= */
+function beginDiscussion(){
+  const ul = document.getElementById('summaryList');
+  ul.innerHTML = '';
+  roles.forEach((r, idx)=>{
+    const li = document.createElement('li');
+    const word = r.role === 'Mister White' ? '-' : currentWords[idx];
+    li.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><div><strong>${r.name}</strong><div class="role">${r.role}</div></div><div style="font-weight:800;color:var(--accent)">${word}</div></div>`;
+    ul.appendChild(li);
+  });
+  showScreen('summaryScreen');
 }
 
-function showRole() {
-    const r = roles[currentIndex];
-    let roleText = "";
+/* =========================
+   REVIEW: restart the reveal round (same roles/words)
+   ========================= */
+function reviewRound(){
+  if(!roles || roles.length===0){ alert('Partita non avviata'); return; }
+  currentIndex = 0;
+  updateRoleScreen();
+  showScreen('roleScreen');
+}
 
-    if(r.role === "Mister White"){
-        roleText = "❓ SEI MISTER WHITE!";
+/* quick review single-person */
+function openReview(){ document.getElementById('reviewName').value=''; document.getElementById('reviewResult').innerText=''; showScreen('reviewScreen'); }
+function closeReview(){ showScreen('setupScreen'); }
+function doReview(){
+  const q = document.getElementById('reviewName').value.trim();
+  if(!q){ alert('Inserisci il tuo nome'); return; }
+  if(!roles || roles.length===0){ document.getElementById('reviewResult').innerText = 'Partita non avviata'; return; }
+  const idx = roles.findIndex(r=> r.name.toLowerCase() === q.toLowerCase());
+  if(idx === -1){ document.getElementById('reviewResult').innerText = 'Nome non trovato (controlla ortografia)'; return; }
+  const r = roles[idx];
+  let text = '';
+  if(r.role === 'Mister White'){
+    if(hintEnabled && window._currentPair && window._currentPair.tema){
+      text = `❓ SEI MISTER WHITE!\nTema: ${window._currentPair.tema}`;
     } else {
-        roleText = "Parola: " + currentWords[currentIndex];
+      text = '❓ SEI MISTER WHITE!\nProva a indovinare la parola degli altri.';
     }
-
-    document.getElementById("roleText").innerText = roleText;
-    document.getElementById("roleText").style.display = "block";
-    document.getElementById("showRoleBtn").style.display = "none";
-    document.getElementById("nextPlayerBtn").style.display = "block";
+  } else {
+    text = `Sei ${r.role} — Parola: ${currentWords[idx]}`;
+  }
+  document.getElementById('reviewResult').innerText = text;
 }
 
-function nextPlayer() {
-    currentIndex++;
-    if(currentIndex >= names.length) {
-        showScreen("readyScreen");
-    } else {
-        updateRoleScreen();
-    }
+/* =========================
+   RESTART
+   ========================= */
+function restart(){
+  // clear roles but keep player list in input for convenience
+  roles = []; currentWords = []; currentIndex = 0; window._currentPair = null;
+  showScreen('setupScreen');
 }
 
-function showSummary() {
-    const ul = document.getElementById("summaryList");
-    ul.innerHTML = "";
-    roles.forEach(r=>{
-        const li = document.createElement("li");
-        li.innerText = `${r.name} → ${r.role}`;
-        ul.appendChild(li);
-    });
-    showScreen("summaryScreen");
-}
-
-function restart() {
-    showScreen("startScreen");
-}
-
-/* ======================================
-   GESTIONE PAROLE
-====================================== */
-function openWordManager() {
-    showScreen("wordManager");
-    renderWordList();
-}
-
-function renderWordList() {
-    const list = document.getElementById("wordList");
-    list.innerHTML = "";
-    randomWords.forEach((w,i)=>{
-        const li = document.createElement("li");
-        li.innerText = `${w.main} → ${w.infiltrator}`;
-        const btn = document.createElement("button");
-        btn.innerText = "Rimuovi";
-        btn.onclick = ()=>{ removeWord(i); };
-        li.appendChild(btn);
-        list.appendChild(li);
-    });
-}
-
-function removeWord(i) {
-    randomWords.splice(i,1);
-    saveWords();
-    renderWordList();
-}
-
-function addWord() {
-    const m = document.getElementById("addMain").value.trim();
-    const inf = document.getElementById("addInfil").value.trim();
-    if(!m || !inf) return alert("Inserisci entrambe le parole!");
-    randomWords.push({main:m, infiltrator:inf});
-    saveWords();
-    document.getElementById("addMain").value = "";
-    document.getElementById("addInfil").value = "";
-    renderWordList();
-}
-
-function closeWordManager() {
-    showScreen("startScreen");
-}
-
-function saveWords() {
-    localStorage.setItem("gameWords", JSON.stringify(randomWords));
-}
-
-/* ======================================
+/* =========================
    UTIL
-====================================== */
-function showScreen(id) {
-    document.querySelectorAll(".screen").forEach(s=>s.style.display="none");
-    document.getElementById(id).style.display = "block";
+   ========================= */
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+  return arr;
 }
 
-function shuffle(a) {
-    return a.sort(()=>Math.random()-0.5);
+/* =========================
+   INIT
+   ========================= */
+(function init(){
+  // ensure words stored shape; if found in localStorage but missing tema, map default tema
+  const stored = JSON.parse(localStorage.getItem('gameWords'));
+  if(Array.isArray(stored) && stored.length>0){
+    // replace only if every item has main+infiltrator+tema
+    const ok = stored.every(w => w && typeof w.main === 'string' && typeof w.infiltrator === 'string' && typeof w.tema === 'string');
+    if(ok) words = stored.slice();
+    else localStorage.removeItem('gameWords');
+  } else {
+    // ensure initial words array is saved so user can remove later
+    localStorage.setItem('gameWords', JSON.stringify(words));
+  }
+  setHintUI();
+})();
+  
+/* =========================
+   Service Worker registration if available
+   ========================= */
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('service-worker.js').catch(()=>{/*silent*/});
 }
-
 </script>
-
-    <script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js")
-    .then(() => console.log("Service Worker registrato"))
-    .catch(err => console.log("Errore registrazione SW:", err));
-}
-</script>
-
 </body>
 </html>
-
-
-
-
