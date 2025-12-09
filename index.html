@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Mister White — Dark (tema)</title>
+<title>Mister White</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#07121a">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -69,10 +69,9 @@ input[type="text"], input[type="number"], input[type="search"]{
       <div class="logo">MW</div>
       <div>
         <div class="h1">Mister White</div>
-        <div class="sub">Dark • Tema (mostrabile)</div>
       </div>
     </div>
-    <div class="small">v1.2</div>
+    <div class="small">v1.3</div>
   </div>
 
   <!-- SETUP -->
@@ -92,23 +91,20 @@ input[type="text"], input[type="number"], input[type="search"]{
 
     <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px">
       <div class="toggle">
-        <div style="font-size:13px;color:var(--muted);margin-right:8px">Mostra Tema a Mister White</div>
+        <div style="font-size:13px;color:var(--muted);margin-right:8px">Indizio a Mister White</div>
         <div id="hintSwitch" class="switch" onclick="toggleHint()"><div class="knob"></div></div>
       </div>
-      <div class="small">Se ON Mister White vedrà: <span class="hint-pill">Tema: ...</span></div>
     </div>
 
     <div class="controls" style="margin-top:14px">
       <button class="button" onclick="startGame()">🎲 Inizia la partita</button>
       <button class="button ghost" onclick="openWordManager()">📝 Visualizza parole</button>
-      <button class="button ghost" onclick="openReview()">🔍 Rivedi la tua parola</button>
     </div>
-    <div class="small" style="margin-top:8px">Nota: le parole si gestiscono dall'elenco (rimuovi) — non è possibile aggiungerne dall'app.</div>
-  </div>
+   </div>
 
   <!-- ROLE -->
   <div id="roleScreen" class="card screen">
-    <div style="margin-bottom:8px" class="small">Mostra il ruolo al giocatore indicato (in segreto)</div>
+    <div style="margin-bottom:8px" class="small">Mostra il ruolo</div>
     <div style="text-align:center">
       <div id="playerName" style="font-weight:800;font-size:20px;margin-bottom:12px"></div>
       <button id="revealBtn" class="button" onclick="revealRole()">Mostra ruolo</button>
@@ -117,19 +113,18 @@ input[type="text"], input[type="number"], input[type="search"]{
         <button id="nextBtn" class="button ghost" style="display:none" onclick="nextPlayer()">➡️ Prossimo</button>
       </div>
     </div>
-    <div class="small" style="margin-top:12px">Dopo che tutti hanno visto il ruolo, viene mostrata la schermata con chi inizia.</div>
   </div>
 
   <!-- READY (order + starting player) -->
   <div id="readyScreen" class="card screen">
     <h3 style="margin-top:0">Tutti hanno visto il ruolo</h3>
-    <div class="small">Ordine di gioco (mescolato)</div>
+    <div class="small">Ordine di gioco</div>
     <div id="orderList" style="margin:10px 0"></div>
     <div class="small">Inizia</div>
     <div id="startingPlayer" style="font-weight:800;color:var(--accent);margin-top:6px"></div>
 
     <div style="margin-top:12px" class="controls">
-      <button class="button" onclick="beginDiscussion()">➡️ Inizia Discussione</button>
+      <button class="button" onclick="beginDiscussion()">➡️ Mostra risultati </button>
       <button class="button ghost" onclick="reviewRound()">🔁 Rivedi le parole (ripeti giro)</button>
     </div>
   </div>
@@ -140,8 +135,6 @@ input[type="text"], input[type="number"], input[type="search"]{
     <ul id="summaryList" class="list" style="margin-top:8px"></ul>
     <div style="margin-top:12px" class="controls">
       <button class="button" onclick="restart()">🔄 Nuova partita</button>
-      <button class="button ghost" onclick="reviewRound()">🔁 Rivedi le parole (ripeti giro)</button>
-      <button class="button ghost" onclick="openWordManager()">📝 Parole</button>
     </div>
   </div>
 
@@ -167,7 +160,6 @@ input[type="text"], input[type="number"], input[type="search"]{
     <div id="reviewResult" style="margin-top:12px;font-weight:700;color:var(--accent)"></div>
   </div>
 
-  <div class="footer small">Consiglio: aggiungi la PWA alla Home - migliora l'esperienza standalone.</div>
 </div>
 
 <script>
